@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.biologeek</groupId>
+		<artifactId>biologeek-bot-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>biologeek-bot-wikipedia-client</artifactId>
+	<properties>
+		<retrofit.version>2.1.0</retrofit.version>
+	</properties>
+	<dependencies><!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>retrofit</artifactId>
+			<version>${retrofit.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.squareup.retrofit/converter-jackson -->
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>converter-jackson</artifactId>
+			<version>${retrofit.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.biologeek</groupId>
+			<artifactId>biologeek-bot-plugin-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
