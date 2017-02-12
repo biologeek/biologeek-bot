@@ -7,9 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>biologeek-bot-wikipedia-client</artifactId>
-	<properties>
-		<retrofit.version>2.1.0</retrofit.version>
-	</properties>
+
 	<dependencies><!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
 		<dependency>
 			<groupId>com.squareup.retrofit2</groupId>
