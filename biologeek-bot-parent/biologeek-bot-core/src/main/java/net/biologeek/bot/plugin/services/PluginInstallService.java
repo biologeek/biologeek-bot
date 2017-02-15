@@ -3,9 +3,9 @@ package net.biologeek.bot.plugin.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.biologeek.bot.plugin.PluginBean;
-
 import org.springframework.stereotype.Service;
+
+import net.biologeek.bot.plugin.PluginBean;
 
 
 @Service

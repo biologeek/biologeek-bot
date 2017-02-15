@@ -7,5 +7,9 @@ public class APIException extends Exception {
 	public APIException(ErrorResponse body) {
 		super(body.getError().getInfo());
 	}
+	
+	public APIException(String message){
+		super(message);
+	}
 
 }

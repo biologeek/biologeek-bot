@@ -3,13 +3,13 @@ package net.biologeek.bot.batch;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import net.biologeek.bot.plugin.Article;
-import net.biologeek.bot.plugin.Category;
 import net.biologeek.bot.plugin.PluginBatch;
+import net.biologeek.bot.plugin.article.ArticleCategories;
+import net.biologeek.bot.plugin.article.ArticleContent;
+import net.biologeek.bot.plugin.category.Category;
 import net.biologeek.bot.plugin.login.User;
 import net.biologeek.bot.plugin.serialization.ContentQueryType;
 import net.biologeek.bot.wiki.client.Wikipedia;
-import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
 
 @SpringBootApplication
 public class HttpsReplaceBatchEntryPoint implements PluginBatch {
@@ -26,9 +26,9 @@ public class HttpsReplaceBatchEntryPoint implements PluginBatch {
 				.build();
 		
 		
-		Category article = client.getCategoryMembers("Physique");
+		ArticleCategories article =  client.getArticleCategories("Tintin");
 		
-		System.out.println(article.getQuery().getCategorymembers());
+		System.out.println(article);
 		
 	}
 	public void execute(String[] params) {

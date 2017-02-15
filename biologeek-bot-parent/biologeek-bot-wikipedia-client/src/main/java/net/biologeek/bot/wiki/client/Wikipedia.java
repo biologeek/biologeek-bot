@@ -1,24 +1,25 @@
 package net.biologeek.bot.wiki.client;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
-import net.biologeek.bot.plugin.Article;
-import net.biologeek.bot.plugin.Category;
+import net.biologeek.bot.plugin.article.Article;
+import net.biologeek.bot.plugin.article.ArticleCategories;
+import net.biologeek.bot.plugin.article.ArticleContent;
+import net.biologeek.bot.plugin.category.Category;
+import net.biologeek.bot.plugin.category.CategoryMembers.CategoryMember;
 import net.biologeek.bot.plugin.login.Login;
 import net.biologeek.bot.plugin.login.Login.LoginStatus;
 import net.biologeek.bot.plugin.login.LoginResponseType;
 import net.biologeek.bot.plugin.login.Token;
 import net.biologeek.bot.plugin.login.User;
 import net.biologeek.bot.plugin.serialization.ContentQueryType;
-import net.biologeek.bot.plugin.serialization.Errorable;
+import net.biologeek.bot.wiki.client.exceptions.APIException;
 import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
-import okhttp3.Interceptor.Chain;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -176,21 +177,21 @@ public class Wikipedia {
 	 * 
 	 * @param title
 	 * @return
+	 * @throws APIException 
 	 */
-	public Category getCategoryMembers(String title){		
+	public Category getCategoryMembers(String title) throws APIException{		
 		try{
 			if (!title.startsWith("Category:"))
 				title = "Category:" + title;
-			Response<Category> response = this.getService().getCategoryMembers(title).execute();
+			Response<Category<List<CategoryMember>>> response = (Response<Category<List<CategoryMember>>>) this.getService().getCategoryMembers(title).execute();
 				return response.body();
 		} catch (IOException e){
-			e.printStackTrace();
+			throw new APIException(e.getMessage());
 		}
-		return null;
 	}
-	public Article getArticle(String title) throws Exception {
+	public ArticleContent getArticleContent(String title) throws Exception {
 		try {
-			Response<Article> response = this.getService().getArticle(title).execute();			
+			Response<ArticleContent> response = this.getService().getArticle(title).execute();			
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -199,9 +200,9 @@ public class Wikipedia {
 	}
 	
 
-	public Article getArticleProp(String title, ContentQueryType property) throws Exception {
+	public ArticleCategories getArticleCategories(String title) throws Exception {
 		try {
-			Response<Article> response = this.getService().getArticleProp(title, property).execute();			
+			Response<ArticleCategories> response = this.getService().getArticleCategories(title).execute();			
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -332,7 +333,4 @@ public class Wikipedia {
 		}
 	}
 
-	public Article getArticleExternalLinks(String string) {
-		return getService().getArticleExternalLinks(string);
-	}
 }
