@@ -8,6 +8,9 @@
 	</parent>
 	<artifactId>biologeek-bot-wikipedia-client</artifactId>
 
+	<properties>
+		<okhttp3.version>3.5.0</okhttp3.version>
+	</properties>
 	<dependencies><!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
 		<dependency>
 			<groupId>com.squareup.retrofit2</groupId>
@@ -25,7 +28,12 @@
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
-			<version>3.5.0</version>
+			<version>${okhttp3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>logging-interceptor</artifactId>
+			<version>${okhttp3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.biologeek</groupId>

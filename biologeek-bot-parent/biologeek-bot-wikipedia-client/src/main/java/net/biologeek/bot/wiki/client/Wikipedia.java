@@ -1,21 +1,26 @@
 package net.biologeek.bot.wiki.client;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import net.biologeek.bot.plugin.Article;
+import net.biologeek.bot.plugin.Category;
 import net.biologeek.bot.plugin.login.Login;
-import net.biologeek.bot.plugin.login.Login.LoginBody;
 import net.biologeek.bot.plugin.login.Login.LoginStatus;
 import net.biologeek.bot.plugin.login.LoginResponseType;
 import net.biologeek.bot.plugin.login.Token;
 import net.biologeek.bot.plugin.login.User;
+import net.biologeek.bot.plugin.serialization.ContentQueryType;
+import net.biologeek.bot.plugin.serialization.Errorable;
 import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
 import okhttp3.Interceptor.Chain;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -39,6 +44,13 @@ public class Wikipedia {
 	private User user;
 	private boolean isLoggedIn;
 	private long timeToWait;
+	
+	Logger logger;
+
+	public Wikipedia() {
+		super();
+		this.logger = Logger.getLogger(Wikipedia.class.getName());
+	}
 
 	public WikipediaEndpoints getService() {
 		return service;
@@ -124,7 +136,7 @@ public class Wikipedia {
 			Call<Token> token = service.getToken();
 			try {
 
-				Token executedBody =null;//= token.execute().body();
+				Token executedBody = token.execute().body();
 				System.out.println(token.execute().raw());
 				if (executedBody.getQuery() != null //
 						&& executedBody.getQuery().getTokens() != null //
@@ -157,11 +169,40 @@ public class Wikipedia {
 		}
 		return this;
 	}
-	
-	public Article getArticle(String title) throws InterruptedException{
-		
+
+	/**
+	 * Returns raw response from mediawiki API mapped into an object.
+	 * 
+	 * 
+	 * @param title
+	 * @return
+	 */
+	public Category getCategoryMembers(String title){		
+		try{
+			if (!title.startsWith("Category:"))
+				title = "Category:" + title;
+			Response<Category> response = this.getService().getCategoryMembers(title).execute();
+				return response.body();
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public Article getArticle(String title) throws Exception {
 		try {
-			return this.getService().getArticle(title).execute().body();
+			Response<Article> response = this.getService().getArticle(title).execute();			
+			return response.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+
+	public Article getArticleProp(String title, ContentQueryType property) throws Exception {
+		try {
+			Response<Article> response = this.getService().getArticleProp(title, property).execute();			
+			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -257,11 +298,14 @@ public class Wikipedia {
 		 * @return the client
 		 */
 		private OkHttpClient client(final String token, final int tokenMinLength) {
+			
+			HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+			logging.setLevel(Level.BODY);
 			return new OkHttpClient.Builder()//
-					.addInterceptor(new Interceptor() {
+					/*.addInterceptor(new Interceptor() {
 
 						@Override
-						public Response intercept(Chain arg0) throws IOException {
+						public okhttp3.Response intercept(Chain arg0) throws IOException {
 							Request req = arg0.request();
 							if (token != null && !token.isEmpty() && token.length() > tokenMinLength) {
 								// TODO parametrize min length in properties and
@@ -275,8 +319,8 @@ public class Wikipedia {
 						@Override
 						/**
 						 * Adds JSON format to query by default
-						 */
-						public Response intercept(Chain arg0) throws IOException {
+						 *
+						public okhttp3.Response intercept(Chain arg0) throws IOException {
 							Request req = arg0.request();
 							req.url()//
 									.newBuilder()//
@@ -284,15 +328,7 @@ public class Wikipedia {
 									.build();
 							return arg0.proceed(req);
 						}
-					}).addInterceptor(new Interceptor() {
-						
-						@Override
-						public Response intercept(Chain chain) throws IOException {
-							
-							System.out.println();
-							return null;
-						}
-					}).build();
+					})*/.addInterceptor(logging).build();
 		}
 	}
 
