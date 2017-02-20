@@ -8,7 +8,7 @@ package net.biologeek.bot.plugin;
 public class PluginBean {
 	
 	
-	private long id;
+	private long pluginId;
 	private String name;
 	private String description;
 	
@@ -24,12 +24,11 @@ public class PluginBean {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public long getId() {
-		return id;
+	public long getPluginId() {
+		return pluginId;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setPluginId(long pluginId) {
+		this.pluginId = pluginId;
 	}
-	
 
 }

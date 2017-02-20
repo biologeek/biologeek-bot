@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.biologeek.bot.plugin.article.Article;
 import net.biologeek.bot.plugin.article.ArticleCategories;
 import net.biologeek.bot.plugin.article.ArticleContent;
 import net.biologeek.bot.plugin.category.Category;
@@ -14,7 +13,6 @@ import net.biologeek.bot.plugin.login.Login.LoginStatus;
 import net.biologeek.bot.plugin.login.LoginResponseType;
 import net.biologeek.bot.plugin.login.Token;
 import net.biologeek.bot.plugin.login.User;
-import net.biologeek.bot.plugin.serialization.ContentQueryType;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
 import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
 import okhttp3.OkHttpClient;
@@ -45,84 +43,12 @@ public class Wikipedia {
 	private User user;
 	private boolean isLoggedIn;
 	private long timeToWait;
-	
+
 	Logger logger;
 
 	public Wikipedia() {
 		super();
 		this.logger = Logger.getLogger(Wikipedia.class.getName());
-	}
-
-	public WikipediaEndpoints getService() {
-		return service;
-	}
-
-	public void setService(WikipediaEndpoints service) {
-		this.service = service;
-	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-
-	public String getBaseURL() {
-		return baseURL;
-	}
-
-	public void setBaseURL(String baseURL) {
-		this.baseURL = baseURL;
-	}
-
-	public String getUserAgent() {
-		return userAgent;
-	}
-
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
-
-	public int getLoginRetries() {
-		return loginRetries;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public void setLoginRetries(int loginRetries) {
-		this.loginRetries = loginRetries;
-	}
-
-	public int getMaxLogins() {
-		return maxLogins;
-	}
-
-	public void setMaxLogins(int maxLogins) {
-		this.maxLogins = maxLogins;
-	}
-
-	public int getTokenMinLength() {
-		return tokenMinLength;
-	}
-
-	public void setTokenMinLength(int tokenMinLength) {
-		this.tokenMinLength = tokenMinLength;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
 	}
 
 	/**
@@ -177,32 +103,34 @@ public class Wikipedia {
 	 * 
 	 * @param title
 	 * @return
-	 * @throws APIException 
+	 * @throws APIException
 	 */
-	public Category getCategoryMembers(String title) throws APIException{		
-		try{
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Category getCategoryMembers(String title) throws APIException {
+		try {
 			if (!title.startsWith("Category:"))
 				title = "Category:" + title;
-			Response<Category<List<CategoryMember>>> response = (Response<Category<List<CategoryMember>>>) this.getService().getCategoryMembers(title).execute();
-				return response.body();
-		} catch (IOException e){
+			Response<Category<List<CategoryMember>>> response = (Response<Category<List<CategoryMember>>>) this
+					.getService().getCategoryMembers(title).execute();
+			return response.body();
+		} catch (IOException e) {
 			throw new APIException(e.getMessage());
 		}
 	}
+
 	public ArticleContent getArticleContent(String title) throws Exception {
 		try {
-			Response<ArticleContent> response = this.getService().getArticle(title).execute();			
+			Response<ArticleContent> response = this.getService().getArticle(title).execute();
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
 
 	public ArticleCategories getArticleCategories(String title) throws Exception {
 		try {
-			Response<ArticleCategories> response = this.getService().getArticleCategories(title).execute();			
+			Response<ArticleCategories> response = this.getService().getArticleCategories(title).execute();
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -299,38 +227,110 @@ public class Wikipedia {
 		 * @return the client
 		 */
 		private OkHttpClient client(final String token, final int tokenMinLength) {
-			
+
 			HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 			logging.setLevel(Level.BODY);
 			return new OkHttpClient.Builder()//
-					/*.addInterceptor(new Interceptor() {
-
-						@Override
-						public okhttp3.Response intercept(Chain arg0) throws IOException {
-							Request req = arg0.request();
-							if (token != null && !token.isEmpty() && token.length() > tokenMinLength) {
-								// TODO parametrize min length in properties and
-								// inject via @Value
-								req.url().newBuilder().addQueryParameter("token", token);
-							}
-							return arg0.proceed(req);
-						}
-					}).addInterceptor(new Interceptor() {
-
-						@Override
-						/**
-						 * Adds JSON format to query by default
-						 *
-						public okhttp3.Response intercept(Chain arg0) throws IOException {
-							Request req = arg0.request();
-							req.url()//
-									.newBuilder()//
-									.addQueryParameter("format", "json")//
-									.build();
-							return arg0.proceed(req);
-						}
-					})*/.addInterceptor(logging).build();
+					/*
+					 * .addInterceptor(new Interceptor() {
+					 * 
+					 * @Override public okhttp3.Response intercept(Chain arg0)
+					 * throws IOException { Request req = arg0.request(); if
+					 * (token != null && !token.isEmpty() && token.length() >
+					 * tokenMinLength) { // TODO parametrize min length in
+					 * properties and // inject via @Value
+					 * req.url().newBuilder().addQueryParameter("token", token);
+					 * } return arg0.proceed(req); } }).addInterceptor(new
+					 * Interceptor() {
+					 * 
+					 * @Override /** Adds JSON format to query by default
+					 *
+					 * public okhttp3.Response intercept(Chain arg0) throws
+					 * IOException { Request req = arg0.request(); req.url()//
+					 * .newBuilder()// .addQueryParameter("format", "json")//
+					 * .build(); return arg0.proceed(req); } })
+					 */.addInterceptor(logging).build();
 		}
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public WikipediaEndpoints getService() {
+		return service;
+	}
+
+	public void setService(WikipediaEndpoints service) {
+		this.service = service;
+	}
+
+	public String getBaseURL() {
+		return baseURL;
+	}
+
+	public void setBaseURL(String baseURL) {
+		this.baseURL = baseURL;
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public int getLoginRetries() {
+		return loginRetries;
+	}
+
+	public void setLoginRetries(int loginRetries) {
+		this.loginRetries = loginRetries;
+	}
+
+	public int getMaxLogins() {
+		return maxLogins;
+	}
+
+	public void setMaxLogins(int maxLogins) {
+		this.maxLogins = maxLogins;
+	}
+
+	public int getTokenMinLength() {
+		return tokenMinLength;
+	}
+
+	public void setTokenMinLength(int tokenMinLength) {
+		this.tokenMinLength = tokenMinLength;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
 
 }

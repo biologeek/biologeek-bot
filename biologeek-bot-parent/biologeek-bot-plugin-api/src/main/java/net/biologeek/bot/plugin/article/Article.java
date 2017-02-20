@@ -70,16 +70,17 @@ public abstract class Article<T> {
 
 	public abstract void setValue(T value);
 
-	public static Article<?> getInstance(ContentQueryType type) {
-		switch (type) {
+	public static class ArticleFactory {
+		public static Article<?> getInstance(ContentQueryType type) {
+			switch (type) {
 
-		case extract:
-			return new ArticleContent();
-		case categories:
-			return new ArticleCategories();
-		default:
-			return null;
+			case extract:
+				return new ArticleContent();
+			case categories:
+				return new ArticleCategories();
+			default:
+				return null;
+			}
 		}
 	}
-
 }

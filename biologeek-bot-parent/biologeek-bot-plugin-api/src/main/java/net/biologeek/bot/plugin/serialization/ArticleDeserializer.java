@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import net.biologeek.bot.plugin.article.Article;
+import net.biologeek.bot.plugin.article.Article.ArticleFactory;
 
 public class ArticleDeserializer extends JsonDeserializer<Article> {
 
@@ -40,7 +41,7 @@ public class ArticleDeserializer extends JsonDeserializer<Article> {
 			
 			for (ContentQueryType type : ContentQueryType.values()){
 				if (node.has(type.name())){
-					article = Article.getInstance(type);
+					article = ArticleFactory.getInstance(type);
 					article.setValue(node.get(type.name()).toString()); // A little tricky
 				}
 			}
