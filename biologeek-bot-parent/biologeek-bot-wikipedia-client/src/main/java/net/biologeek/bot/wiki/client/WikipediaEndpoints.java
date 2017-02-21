@@ -1,13 +1,11 @@
 package net.biologeek.bot.wiki.client;
 
-import net.biologeek.bot.plugin.article.Article;
-import net.biologeek.bot.plugin.article.ArticleCategories;
-import net.biologeek.bot.plugin.article.ArticleContent;
-import net.biologeek.bot.plugin.category.Category;
-import net.biologeek.bot.plugin.login.Login;
-import net.biologeek.bot.plugin.login.Login.LoginBody;
-import net.biologeek.bot.plugin.login.Token;
-import net.biologeek.bot.plugin.serialization.ContentQueryType;
+import net.biologeek.bot.api.plugin.article.ArticleCategories;
+import net.biologeek.bot.api.plugin.article.ArticleContent;
+import net.biologeek.bot.api.plugin.category.Category;
+import net.biologeek.bot.api.plugin.login.Login;
+import net.biologeek.bot.api.plugin.login.Login.LoginBody;
+import net.biologeek.bot.api.plugin.login.Token;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

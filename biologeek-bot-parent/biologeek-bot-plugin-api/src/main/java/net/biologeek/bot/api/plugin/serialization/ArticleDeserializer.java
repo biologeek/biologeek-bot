@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.serialization;
+package net.biologeek.bot.api.plugin.serialization;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import net.biologeek.bot.plugin.article.Article;
-import net.biologeek.bot.plugin.article.Article.ArticleFactory;
+import net.biologeek.bot.api.plugin.article.Article;
+import net.biologeek.bot.api.plugin.article.Article.ArticleFactory;
 
 public class ArticleDeserializer extends JsonDeserializer<Article> {
 

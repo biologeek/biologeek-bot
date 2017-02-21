@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.serialization;
+package net.biologeek.bot.api.plugin.serialization;
 
 public enum CategoryListParameter {
 	abusefilters, abuselog, allcategories, alldeletedrevisions, allfileusages, allimages, alllinks, allpages, //

@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.login;
+package net.biologeek.bot.api.plugin.login;
 
 public class User {
 

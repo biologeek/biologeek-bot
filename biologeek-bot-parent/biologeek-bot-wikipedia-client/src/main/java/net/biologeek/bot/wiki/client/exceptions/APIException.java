@@ -1,6 +1,6 @@
 package net.biologeek.bot.wiki.client.exceptions;
 
-import net.biologeek.bot.plugin.ErrorResponse;
+import net.biologeek.bot.api.plugin.ErrorResponse;
 
 public class APIException extends Exception {
 

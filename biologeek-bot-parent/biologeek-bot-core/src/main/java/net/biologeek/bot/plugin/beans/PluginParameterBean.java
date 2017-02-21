@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin;
+package net.biologeek.bot.plugin.beans;
 
 /**
  * Represents a parameter of a plugin.

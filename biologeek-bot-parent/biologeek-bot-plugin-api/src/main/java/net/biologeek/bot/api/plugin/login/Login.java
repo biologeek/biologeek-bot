@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.login;
+package net.biologeek.bot.api.plugin.login;
 
 import java.util.List;
 

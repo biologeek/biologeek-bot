@@ -1,10 +1,10 @@
-package net.biologeek.bot.plugin.category;
+package net.biologeek.bot.api.plugin.category;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import net.biologeek.bot.plugin.category.CategoryMembers.CategoryMember;
+import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
 
 public class CategoryMembers extends Category<List<CategoryMember>> {
 

@@ -1,6 +1,6 @@
 package net.biologeek.bot.install;
 
-import net.biologeek.bot.plugin.PluginInstaller;
+import net.biologeek.bot.api.plugin.PluginInstaller;
 
 public class HttpsReplacePluginInstall extends PluginInstaller {
 

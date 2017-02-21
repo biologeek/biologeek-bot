@@ -2,7 +2,7 @@ package net.biologeek.bot.plugin.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.biologeek.bot.plugin.PluginBean;
+import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.repositories.PluginRepository;
 
 public class PluginService {

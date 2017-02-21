@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.biologeek.bot.plugin.PluginBatch;
-import net.biologeek.bot.plugin.PluginBean;
+import net.biologeek.bot.plugin.beans.PluginBatch;
+import net.biologeek.bot.plugin.beans.PluginBean;
 
 @Service
 public abstract class PluginInstallService {
@@ -75,8 +75,9 @@ public abstract class PluginInstallService {
 	 */
 	public PluginBatch installBatch(PluginBatch batch){
 		
+		batch = this.installBatch();
+		
 		if (batch != null || batch.getPlugin() != null){
-			
 			pluginService.save(batch.getPlugin());
 		}
 		return batch;

@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.article;
+package net.biologeek.bot.api.plugin.article;
 
 import java.util.List;
 

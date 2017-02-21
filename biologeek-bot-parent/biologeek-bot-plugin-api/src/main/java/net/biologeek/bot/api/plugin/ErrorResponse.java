@@ -1,8 +1,8 @@
-package net.biologeek.bot.plugin;
+package net.biologeek.bot.api.plugin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import net.biologeek.bot.plugin.serialization.Errorable;
+import net.biologeek.bot.api.plugin.serialization.Errorable;
 
 /**
  * * { "error": { "code": "invalidcategory", "info": "The category name you

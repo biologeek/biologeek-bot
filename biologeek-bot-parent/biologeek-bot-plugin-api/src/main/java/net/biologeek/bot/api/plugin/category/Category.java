@@ -1,9 +1,9 @@
-package net.biologeek.bot.plugin.category;
+package net.biologeek.bot.api.plugin.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import net.biologeek.bot.plugin.serialization.Errorable;
+import net.biologeek.bot.api.plugin.serialization.Errorable;
 
 /**
  * 

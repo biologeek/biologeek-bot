@@ -1,11 +1,12 @@
-package net.biologeek.bot.plugin.article;
+package net.biologeek.bot.api.plugin.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import net.biologeek.bot.plugin.serialization.ArticleDeserializer;
-import net.biologeek.bot.plugin.serialization.ContentQueryType;
+import net.biologeek.bot.api.plugin.article.ArticleContent;
+import net.biologeek.bot.api.plugin.serialization.ArticleDeserializer;
+import net.biologeek.bot.api.plugin.serialization.ContentQueryType;
 
 /**
  * Represents a raw Wikipedia article response. Example JSON :

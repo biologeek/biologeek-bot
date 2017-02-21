@@ -1,10 +1,10 @@
-package net.biologeek.bot.plugin.login;
+package net.biologeek.bot.api.plugin.login;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import net.biologeek.bot.plugin.login.Login.Warning;
+import net.biologeek.bot.api.plugin.login.Login.Warning;
 
 public class Token {
 
