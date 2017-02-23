@@ -9,7 +9,6 @@ import net.biologeek.bot.api.plugin.article.ArticleContent;
 import net.biologeek.bot.api.plugin.category.Category;
 import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
 import net.biologeek.bot.api.plugin.login.Login;
-import net.biologeek.bot.api.plugin.login.Login.LoginBody;
 import net.biologeek.bot.api.plugin.login.Login.LoginStatus;
 import net.biologeek.bot.api.plugin.login.LoginResponseType;
 import net.biologeek.bot.api.plugin.login.Token;

@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import net.biologeek.bot.api.plugin.PluginBatch;
 import net.biologeek.bot.api.plugin.PluginBean;
+import net.biologeek.bot.install.HttpsReplacePluginInstall;
+import net.biologeek.bot.plugin.beans.Plugin;
 
 @SpringBootApplication
 public class HttpsReplaceBatchEntryPoint extends PluginBatch {

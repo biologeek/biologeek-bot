@@ -10,6 +10,7 @@
 		<module>biologeek-bot-https-replace</module>
 		<module>biologeek-bot-plugin-api</module>
 		<module>biologeek-bot-wikipedia-client</module>
+		<module>biologeek-webapp</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -1,32 +1,59 @@
 package net.biologeek.bot.plugin.beans;
 
-import java.time.Period;
+import java.util.Date;
 
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 
-public abstract class PluginBatch {
+public abstract class PluginBatch<T> {
 
 	/**
 	 * Batch Plugin object
 	 */
 	@OneToOne(fetch=FetchType.EAGER)
-	private PluginBean plugin;
+	protected PluginBean plugin;
 	/**
 	 * Batch concrete class
 	 */
-	private String className;
+	protected String className;
 	/**
 	 * The period of time over which the batch will be able to run
 	 */
-	private Period batchPeriod;
+	protected Period batchPeriod;
 	/**
 	 * Time frequency is expressed in min-1
 	 */
-	private double timeFrequency;
+	protected double timeFrequency;
+	
+	
+	/**
+	 * The last time batch was launched
+	 */
+	protected Date lastLaunchTime;
+	
+	
+	public abstract void setReader(ItemReader<T> reader);
+	public abstract void setWriter(ItemWriter<T> writer);
+	public abstract void setProcesor(ItemProcessor<T, T> procesor);
+	
 
+	/**
+	 * Method called to launch the batch
+	 * @param params
+	 */
 	public abstract void execute(String[] params);
+
+	public Date getLastLaunchTime() {
+		return lastLaunchTime;
+	}
+
+	public void setLastLaunchTime(Date lastLaunchTime) {
+		this.lastLaunchTime = lastLaunchTime;
+	}
 
 	public PluginBean getPlugin() {
 		return plugin;

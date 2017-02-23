@@ -1,15 +1,32 @@
 package net.biologeek.bot.plugin.services;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Service;
 
+import net.biologeek.bot.plugin.beans.Plugin;
 import net.biologeek.bot.plugin.beans.PluginBatch;
 import net.biologeek.bot.plugin.beans.PluginBean;
+import net.biologeek.bot.plugin.exceptions.InstallException;
+import net.biologeek.bot.plugin.exceptions.UninstallException;
+import sun.misc.URLClassPath;
 
 @Service
 public abstract class PluginInstallService {
@@ -17,6 +34,10 @@ public abstract class PluginInstallService {
 	ServiceLoader<PluginBatch> pluginBatchScanner;
 	@Autowired
 	private PluginService pluginService;
+	@Autowired
+	private PluginJarDelegate jarService;
+	protected String propertiesFile;
+	protected String adminPanelHtmlTemplate;
 
 	Logger logger;
 
@@ -57,31 +78,95 @@ public abstract class PluginInstallService {
 		}
 		return result;
 	}
-	
-	
-	public PluginBean saveOrUpdatePluginBean(PluginBean bean){
+
+	public PluginBean saveOrUpdatePluginBean(PluginBean bean) {
 		if (bean.getPluginId() > 0)
 			return pluginService.update(bean);
-		else 
+		else
 			return pluginService.save(bean);
 	}
-	
+
 	/**
-	 * Installs a plugin by saving the {@link PluginBean} and {@link PluginBatch} objects.
+	 * Installs a plugin by saving the {@link PluginBean} and
+	 * {@link PluginBatch} objects.
 	 * 
-	 * Use {@link PluginInstallService#installBatch()} and call this method inside
+	 * Calls {@link PluginInstallService#beforeSaveBatch()} prior to any action
+	 * Then plugin is saved and afterSaveBatch method is called
+	 * 
 	 * @param batch
 	 * @return
 	 */
-	public PluginBatch installBatch(PluginBatch batch){
+	public PluginBatch install(String jarFile) {
+
+		logger.info("Starting batch install");
+		File jar = new File(jarFile);
 		
-		batch = this.installBatch();
-		
-		if (batch != null || batch.getPlugin() != null){
-			pluginService.save(batch.getPlugin());
-		}
-		return batch;
+		jarService.scanJarFileForAnnotatedClass(jarFile, Plugin.class);
+		return null;
 	}
+
+	protected abstract void afterSaveBatch();
+
+	protected abstract PluginBatch beforeSaveBatch(PluginBatch batch);
+
+	/**
+	 * This method will be called when uninstalling Plugin
+	 * 
+	 * @param options
+	 * @throws UninstallException
+	 */
+	public void uninstall(String jarFile) throws UninstallException {
+
+		File file = new File(jarFile);
+		try {
+			this.removeJarFromClasspath(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new UninstallException("File not found");
+		}
+	}
+
+	/**
+	 * Removes jar file from classpath
+	 * 
+	 * @param file
+	 * @throws FileNotFoundException
+	 * @throws UninstallException
+	 */
+	private void removeJarFromClasspath(File file) throws FileNotFoundException, UninstallException {
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				file.delete();
+
+				URL url;
+				try {
+					url = file.toURI().toURL();
+
+					URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+					Field ucpField =  URLClassLoader.class.getDeclaredField("ucp");
+					ucpField.setAccessible(true);
+					URLClassPath ucp = (URLClassPath) ucpField.get(urlClassLoader);
+					Field urlsField = URLClassPath.class.getDeclaredField("urls");
+					urlsField.setAccessible(true);
+					((Stack) urlsField.get(ucp)).remove(url);
+				} catch (MalformedURLException | NoSuchFieldException | SecurityException | IllegalArgumentException
+						| IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		} else {
+			throw new FileNotFoundException();
+		}
+
+	}
+
+
+	public abstract void setAdminPanelHtmlTemplate(String tpl);
+
+	public abstract void setPropertiesFile(String tpl);
+
 	
-	public abstract PluginBatch installBatch();
+
 }

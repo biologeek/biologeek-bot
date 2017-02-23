@@ -35,11 +35,5 @@ public class PluginBean {
 	public void setPluginId(long pluginId) {
 		this.pluginId = pluginId;
 	}
-	public PluginBatch getBatch() {
-		return batch;
-	}
-	public void setBatch(PluginBatch batch) {
-		this.batch = batch;
-	}
 
 }

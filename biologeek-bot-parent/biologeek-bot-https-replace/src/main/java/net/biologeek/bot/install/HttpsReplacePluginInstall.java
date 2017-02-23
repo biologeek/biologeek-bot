@@ -1,17 +1,28 @@
 package net.biologeek.bot.install;
 
-import net.biologeek.bot.api.plugin.PluginInstaller;
+import net.biologeek.bot.plugin.beans.PluginBatch;
+import net.biologeek.bot.plugin.services.PluginInstallService;
 
-public class HttpsReplacePluginInstall extends PluginInstaller {
+public class HttpsReplacePluginInstall extends PluginInstallService {
 
 	@Override
-	public void setAdminPanelHtmlTemplate(String tpl) {
+	protected void afterSaveBatch() {
 		
 	}
 
 	@Override
+	public void setAdminPanelHtmlTemplate(String tpl) {
+		this.adminPanelHtmlTemplate = tpl;
+	}
+
+	@Override
 	public void setPropertiesFile(String tpl) {
-		
+		this.propertiesFile = tpl;
+	}
+
+	@Override
+	protected PluginBatch beforeSaveBatch(PluginBatch batch) {
+		return batch;
 	}
 
 }
