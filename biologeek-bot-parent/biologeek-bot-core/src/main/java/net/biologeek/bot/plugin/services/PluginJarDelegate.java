@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -17,11 +18,14 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Service;
 
+import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.utils.Constants;
 
 @Service
 public class PluginJarDelegate {
+
+	private Logger logger;
 
 	/**
 	 * Adds the jar to the classpath and scans for the implementation of class1
@@ -35,10 +39,11 @@ public class PluginJarDelegate {
 	 * @throws ClassNotFoundException
 	 * @throws InstallException
 	 */
-	public Object scanJarFileForImplementation(String jar, Class clazz)
+	public Object scanJarFileForImplementation(String jar, Class clazz, boolean isNecesaryToAddToClasspath)
 			throws ClassNotFoundException, InstallException {
 		Object result = new Object();
-		addJarToClasspath(new File(jar));
+		if (isNecesaryToAddToClasspath)
+			addJarToClasspath(new File(jar));
 
 		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true);
 
@@ -58,7 +63,13 @@ public class PluginJarDelegate {
 		return result;
 	}
 
-	private void addJarToClasspath(File file) throws InstallException {
+	/**
+	 * Adds parametered file to classpath of the application
+	 * 
+	 * @param file
+	 * @throws InstallException
+	 */
+	public void addJarToClasspath(File file) throws InstallException {
 		URI uri = file.toURI();
 		try {
 			URLClassLoader loader = (URLClassLoader) ClassLoader.getSystemClassLoader();
@@ -73,17 +84,42 @@ public class PluginJarDelegate {
 
 	}
 
-	public List<String> scanJarFileForAnnotatedClass(String jarFile, Class<? extends Annotation> class1) {
-		
+	public List<String> scanClasspathForAnnotatedClass(PluginBean bean, Class<? extends Annotation> class1) {
+
 		List<String> res = new ArrayList<>();
+
 		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true);
-		
+
 		provider.addIncludeFilter(new AnnotationTypeFilter(class1));
-		
-		for (BeanDefinition bean : provider.findCandidateComponents(Constants.BASE_PACKAGE)){
-			res.add(bean.getBeanClassName());
+
+		for (BeanDefinition beanDef : provider.findCandidateComponents(Constants.BASE_PACKAGE)) {
+			res.add(beanDef.getBeanClassName());
 		}
-		
+
 		return res;
+	}
+
+	/**
+	 * Tries to instantiate class toInstantiate. Throws exception if class is
+	 * not annotated with anno or if it could not instantiate object
+	 * 
+	 * @param toInstantiate
+	 * @param anno
+	 * @return
+	 * @throws InstallException
+	 */
+	public Object instantiateAnnotatedClass(Class<?> toInstantiate, Class<? extends Annotation> anno)
+			throws InstallException {
+		if (toInstantiate.isAnnotationPresent(anno)) {
+			try {
+				return toInstantiate.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				logger.severe("Could not instantiate Class " + toInstantiate.getName());
+				e.printStackTrace();
+				throw new InstallException(e.getMessage());
+			}
+		} else {
+			throw new IllegalArgumentException("Class is not annotated with " + anno.getName());
+		}
 	}
 }

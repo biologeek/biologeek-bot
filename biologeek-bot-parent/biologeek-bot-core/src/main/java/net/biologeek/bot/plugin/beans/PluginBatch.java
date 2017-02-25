@@ -1,25 +1,29 @@
 package net.biologeek.bot.plugin.beans;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
+import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
 
-public abstract class PluginBatch<T> {
+/**
+ * An abstract plugin batch with main batch parameters, attached plugin, and batch unit records.
+ *
+ * @param <T> The type of object processed (articles, categories, users, ...) 
+ */
+public abstract class PluginBatch<T> implements Batch {
 
 	/**
 	 * Batch Plugin object
 	 */
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
 	protected PluginBean plugin;
 	/**
 	 * Batch concrete class
 	 */
-	protected String className;
+	private Class<? extends PluginBatch<?>> batchClass;
 	/**
 	 * The period of time over which the batch will be able to run
 	 */
@@ -28,21 +32,20 @@ public abstract class PluginBatch<T> {
 	 * Time frequency is expressed in min-1
 	 */
 	protected double timeFrequency;
-	
-	
+
 	/**
 	 * The last time batch was launched
 	 */
 	protected Date lastLaunchTime;
 	
-	
-	public abstract void setReader(ItemReader<T> reader);
-	public abstract void setWriter(ItemWriter<T> writer);
-	public abstract void setProcesor(ItemProcessor<T, T> procesor);
-	
+	/**
+	 * Log traces of each batch launch
+	 */
+	protected Set<BatchUnitRecord> logs;
 
 	/**
 	 * Method called to launch the batch
+	 * 
 	 * @param params
 	 */
 	public abstract void execute(String[] params);
@@ -63,16 +66,12 @@ public abstract class PluginBatch<T> {
 		this.plugin = plugin;
 	}
 
-	public void getClassName(String className) {
-		this.className = className;
+	public Class<? extends PluginBatch<?>> getBatchClass() {
+		return batchClass;
 	}
 
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
+	public void setBatchClass(Class<? extends PluginBatch<?>> batchClass) {
+		this.batchClass = batchClass;
 	}
 
 	public Period getBatchPeriod() {

@@ -3,29 +3,23 @@ package net.biologeek.bot.plugin.services;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Service;
 
-import net.biologeek.bot.plugin.beans.Plugin;
 import net.biologeek.bot.plugin.beans.PluginBatch;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.UninstallException;
+import net.biologeek.bot.plugin.install.PluginInstaller;
 import sun.misc.URLClassPath;
 
 @Service
@@ -36,8 +30,8 @@ public abstract class PluginInstallService {
 	private PluginService pluginService;
 	@Autowired
 	private PluginJarDelegate jarService;
-	protected String propertiesFile;
-	protected String adminPanelHtmlTemplate;
+	private String propertiesFile;
+	private String adminPanelHtmlTemplate;
 
 	Logger logger;
 
@@ -90,27 +84,54 @@ public abstract class PluginInstallService {
 	 * Installs a plugin by saving the {@link PluginBean} and
 	 * {@link PluginBatch} objects.
 	 * 
+	 * Passed PluginBean object must be correctly filled.
+	 * 
 	 * Calls {@link PluginInstallService#beforeSaveBatch()} prior to any action
 	 * Then plugin is saved and afterSaveBatch method is called
 	 * 
 	 * @param batch
 	 * @return
+	 * @throws InstallException
 	 */
-	public PluginBatch install(String jarFile) {
+	public PluginBean install(PluginBean bean) throws InstallException {
 
 		logger.info("Starting batch install");
-		File jar = new File(jarFile);
-		
-		jarService.scanJarFileForAnnotatedClass(jarFile, Plugin.class);
-		return null;
+
+		jarService.addJarToClasspath(new File(bean.getJarFile()));
+		PluginInstaller installer = bean.getInstaller();
+
+		logger.info("Before save batch");
+		bean = installer.beforeSaveBatch(bean);
+
+		pluginService.save(bean);
+
+		logger.info("After save batch");
+		installer.afterSaveBatch();
+
+		return bean;
 	}
 
-	protected abstract void afterSaveBatch();
+	public PluginBean install(String jarFile) throws InstallException {
 
-	protected abstract PluginBatch beforeSaveBatch(PluginBatch batch);
+		PluginBean bean = new PluginBean();
+		if (new File(jarFile).exists()) {
+			bean.setJarFile(jarFile);
+			try {
+				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class, true));
+				bean.setInstaller((PluginInstaller) jarService.scanJarFileForImplementation(jarFile, PluginInstaller.class, false));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				throw new InstallException(e.getMessage());
+			}
+		}
+
+		return install(bean);
+	}
 
 	/**
-	 * This method will be called when uninstalling Plugin
+	 * This method will be called when uninstalling Plugin. It orchestrates its
+	 * uninstall and manages different steps (removing temp folder, database
+	 * entries, ...)
 	 * 
 	 * @param options
 	 * @throws UninstallException
@@ -143,7 +164,7 @@ public abstract class PluginInstallService {
 					url = file.toURI().toURL();
 
 					URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-					Field ucpField =  URLClassLoader.class.getDeclaredField("ucp");
+					Field ucpField = URLClassLoader.class.getDeclaredField("ucp");
 					ucpField.setAccessible(true);
 					URLClassPath ucp = (URLClassPath) ucpField.get(urlClassLoader);
 					Field urlsField = URLClassPath.class.getDeclaredField("urls");
@@ -161,12 +182,5 @@ public abstract class PluginInstallService {
 		}
 
 	}
-
-
-	public abstract void setAdminPanelHtmlTemplate(String tpl);
-
-	public abstract void setPropertiesFile(String tpl);
-
-	
 
 }

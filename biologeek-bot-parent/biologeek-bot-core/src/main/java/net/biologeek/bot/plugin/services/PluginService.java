@@ -1,5 +1,7 @@
 package net.biologeek.bot.plugin.services;
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.biologeek.bot.plugin.beans.PluginBean;
@@ -9,6 +11,12 @@ public class PluginService {
 
 	@Autowired
 	private PluginRepository pluginDao;
+	private Logger logger;
+
+	public PluginService() {
+		super();
+		logger = Logger.getLogger(this.getClass().getName());
+	}
 
 	public PluginBean getPluginById(long pluginId) {
 		return pluginDao.findOne(pluginId);
@@ -19,6 +27,7 @@ public class PluginService {
 	}
 
 	public PluginBean save(PluginBean bean) {
+		logger.info("Starting batch install");
 		return pluginDao.save(bean);
 	}
 
