@@ -8,6 +8,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
@@ -26,30 +27,30 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan("net.biologeek.bot")
 @EnableJpaRepositories
 @EnableTransactionManagement
-@PropertySources({ @PropertySource("${app.parameters}/configuration.properties"),
-		@PropertySource("${app.parameters}/bdd.properties") })
+@PropertySources({ //@PropertySource("file://${app.parameters}/configuration.properties"),
+		@PropertySource("file:${app.parameters}/bdd.properties") })
 /**
  * Datasource building consists of JNDI lookup over comp/env/jdbc/wikibot
  */
 public class ApplicationConfig {
 
-	@Value("${jdbc.connection.jndiname")
+	@Value("${jdbc.connection.jndiname}")
 	protected String connectionJndiName;
 
-	@Value("${jdbc.connection.driver")
+	@Value("${jdbc.connection.driver}")
 	protected String connectionDriverClassName;
 
-	@Value("${jdbc.connection.url")
+	@Value("${jdbc.connection.url}")
 	protected String connectionURL;
 
-	@Value("${jdbc.connection.user")
+	@Value("${jdbc.connection.user}")
 	protected String connectionUserName;
 
 	@Value("${jdbc.connection.password")
 	protected String connectionPassword;
 
 	@Bean
-	public TomcatEmbeddedServletContainerFactory tomcat() {
+	public EmbeddedServletContainerFactory tomcat() {
 		return new TomcatEmbeddedServletContainerFactory() {
 
 			protected TomcatEmbeddedServletContainer getTomcatEmbeddedServletContainer(Tomcat tomcat) {
@@ -66,7 +67,7 @@ public class ApplicationConfig {
 				resource.setProperty("url", connectionURL);
 				resource.setProperty("password", connectionPassword);
 				resource.setProperty("username", connectionUserName);
-
+				resource.setType("javax.sql.DataSource");
 				context.getNamingResources().addResource(resource);
 			}
 		};
@@ -75,7 +76,7 @@ public class ApplicationConfig {
 	@Bean
 	public DataSource datasource() throws Exception {
 		JndiObjectFactoryBean bean = new JndiObjectFactoryBean();
-		bean.setJndiName(connectionJndiName);
+		bean.setJndiName("java:comp/env/"+connectionJndiName);
 
 		try {
 			bean.afterPropertiesSet();
