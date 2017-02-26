@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.beans;
+package net.biologeek.bot.plugin.beans.batch;
 
 import java.util.LinkedList;
 

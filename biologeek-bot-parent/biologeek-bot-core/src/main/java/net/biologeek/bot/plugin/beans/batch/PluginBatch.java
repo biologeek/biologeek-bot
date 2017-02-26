@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.beans;
+package net.biologeek.bot.plugin.beans.batch;
 
 import java.util.Date;
 import java.util.Set;
@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
+import net.biologeek.bot.plugin.beans.Period;
+import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
 
 /**
