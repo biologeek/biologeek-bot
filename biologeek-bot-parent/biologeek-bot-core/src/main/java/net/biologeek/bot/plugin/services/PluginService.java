@@ -3,10 +3,12 @@ package net.biologeek.bot.plugin.services;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.repositories.PluginRepository;
 
+@Service
 public class PluginService {
 
 	@Autowired

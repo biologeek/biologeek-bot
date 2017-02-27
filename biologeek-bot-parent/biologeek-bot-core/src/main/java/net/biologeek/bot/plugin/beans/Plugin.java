@@ -16,6 +16,10 @@ public @interface Plugin {
 	Class<? extends PluginInstallService> installerClass() default PluginInstallService.class;
 
 	@SuppressWarnings("rawtypes")
+	/**
+	 * the batch entry point class
+	 * @return
+	 */
 	Class<? extends PluginBatch> entryPoint() default PluginBatch.class;
 
 }

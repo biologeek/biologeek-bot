@@ -1,5 +1,7 @@
 package net.biologeek.bot.plugin.config;
 
+import java.util.Properties;
+
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.embedded.DataSourceFactory;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -27,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan("net.biologeek.bot")
 @EnableJpaRepositories
 @EnableTransactionManagement
-@PropertySources({ //@PropertySource("file://${app.parameters}/configuration.properties"),
+@PropertySources({ // @PropertySource("file://${app.parameters}/configuration.properties"),
 		@PropertySource("file:${app.parameters}/bdd.properties") })
 /**
  * Datasource building consists of JNDI lookup over comp/env/jdbc/wikibot
@@ -48,6 +51,9 @@ public class ApplicationConfig {
 
 	@Value("${jdbc.connection.password")
 	protected String connectionPassword;
+
+	@Value("${hibernate.dialect}")
+	private String dialect;
 
 	@Bean
 	public EmbeddedServletContainerFactory tomcat() {
@@ -76,7 +82,7 @@ public class ApplicationConfig {
 	@Bean
 	public DataSource datasource() throws Exception {
 		JndiObjectFactoryBean bean = new JndiObjectFactoryBean();
-		bean.setJndiName("java:comp/env/"+connectionJndiName);
+		bean.setJndiName("java:comp/env/" + connectionJndiName);
 
 		try {
 			bean.afterPropertiesSet();
@@ -101,7 +107,18 @@ public class ApplicationConfig {
 		emf.setDataSource(ds);
 		emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 		emf.setPackagesToScan("net.biologeek.bot.plugin.beans");
+
+		emf.setJpaProperties(properties());
 		return emf;
+	}
+
+	private Properties properties() {
+		Properties props = new Properties();
+		props.put("hibernate.dialect", dialect);
+		props.put("hibernate.show_sql", true);
+		props.put("hibernate.hbm2ddl.auto", "update");
+		
+		return props;
 	}
 
 }
