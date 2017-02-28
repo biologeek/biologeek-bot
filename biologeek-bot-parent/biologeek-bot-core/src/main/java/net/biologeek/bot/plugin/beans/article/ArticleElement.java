@@ -1,7 +1,9 @@
 package net.biologeek.bot.plugin.beans.article;
 
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.MappedSuperclass;
+
+import org.springframework.data.annotation.Id;
 
 /**
  * Represents a raw Wikipedia article response. Example JSON :
@@ -15,14 +17,12 @@ import javax.persistence.InheritanceType;
  * @author xcaron
  *
  */
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@MappedSuperclass 
 public abstract class ArticleElement<T> {
 
-	
-	private long id;
+	@Id@GeneratedValue
+	protected long id;
 	private String title;
-	
-	private T value;
 
 	public ArticleElement() {
 		super();
@@ -44,12 +44,7 @@ public abstract class ArticleElement<T> {
 		this.title = title;
 	}
 
-	public T getValue() {
-		return value;
-	}
+	public abstract T getValue();
 
-	public void setValue(T value) {
-		this.value = value;
-	}
-
+	public abstract void setValue(T value);
 }

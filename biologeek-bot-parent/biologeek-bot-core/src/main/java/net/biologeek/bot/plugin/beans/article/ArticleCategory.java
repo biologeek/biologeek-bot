@@ -3,7 +3,9 @@ package net.biologeek.bot.plugin.beans.article;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.springframework.data.annotation.Id;
 
 @Entity
 public class ArticleCategory {
@@ -15,6 +17,9 @@ public class ArticleCategory {
 	private long categoryId;
 	private String fullWikipediaTitle;
 	private String readableTitle;
+	
+	@ManyToOne
+	private ArticleCategories articleCategories;
 
 	public long getArticleCateggoryId() {
 		return articleCateggoryId;

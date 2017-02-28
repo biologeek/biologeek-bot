@@ -32,7 +32,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  */
 public class Wikipedia {
 
-	private Country country;
+	private List<Country> countries;
 	WikipediaEndpoints service;
 	private String baseURL;
 	private String userAgent;
@@ -187,8 +187,8 @@ public class Wikipedia {
 			return this;
 		}
 
-		public WikipediaBuilder language(Country country) {
-			instance.setCountry(country);
+		public WikipediaBuilder languages(List<Country> country) {
+			instance.setCountries(country);
 			return this;
 		}
 
@@ -253,12 +253,12 @@ public class Wikipedia {
 		}
 	}
 
-	public Country getCountry() {
-		return country;
+	public List<Country> getCountries() {
+		return countries;
 	}
 
-	public void setCountry(Country country) {
-		this.country = country;
+	public void setCountries(List<Country> country2) {
+		this.countries = country2;
 	}
 
 	public WikipediaEndpoints getService() {

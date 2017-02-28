@@ -1,10 +1,16 @@
 package net.biologeek.bot.plugin.beans.batch;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.springframework.data.annotation.Id;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
@@ -15,8 +21,11 @@ import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
  *
  * @param <T> The type of object processed (articles, categories, users, ...) 
  */
+@Entity
 public abstract class PluginBatch<T> implements Batch {
 
+	@Id@GeneratedValue
+	private long id;
 	/**
 	 * Batch Plugin object
 	 */
@@ -29,6 +38,7 @@ public abstract class PluginBatch<T> implements Batch {
 	/**
 	 * The period of time over which the batch will be able to run
 	 */
+	@Embedded
 	protected Period batchPeriod;
 	/**
 	 * Time frequency is expressed in min-1
@@ -43,7 +53,8 @@ public abstract class PluginBatch<T> implements Batch {
 	/**
 	 * Log traces of each batch launch
 	 */
-	protected Set<BatchUnitRecord> logs;
+	@OneToMany(fetch=FetchType.LAZY)
+	protected List<BatchUnitRecord> logs;
 
 	/**
 	 * Method called to launch the batch

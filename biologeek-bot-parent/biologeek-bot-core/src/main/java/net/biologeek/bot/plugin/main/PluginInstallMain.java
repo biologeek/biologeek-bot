@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.services.PluginInstallService;
-import net.biologeek.bot.plugin.services.PluginJarDelegate;
 
 /**
  * 

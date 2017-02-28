@@ -19,7 +19,7 @@ import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.UninstallException;
-import net.biologeek.bot.plugin.install.PluginInstaller;
+import net.biologeek.bot.plugin.install.AbstractPluginInstaller;
 import sun.misc.URLClassPath;
 
 @Service
@@ -98,7 +98,7 @@ public abstract class PluginInstallService {
 		logger.info("Starting batch install");
 
 		jarService.addJarToClasspath(new File(bean.getJarFile()));
-		PluginInstaller installer = bean.getInstaller();
+		AbstractPluginInstaller installer = bean.getInstaller();
 
 		logger.info("Before save batch");
 		bean = installer.beforeSaveBatch(bean);
@@ -118,7 +118,8 @@ public abstract class PluginInstallService {
 			bean.setJarFile(jarFile);
 			try {
 				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class, true));
-				bean.setInstaller((PluginInstaller) jarService.scanJarFileForImplementation(jarFile, PluginInstaller.class, false));
+				bean.setInstaller((AbstractPluginInstaller) jarService.scanJarFileForImplementation(jarFile,
+						AbstractPluginInstaller.class, false));
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				throw new InstallException(e.getMessage());

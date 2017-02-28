@@ -1,30 +1,33 @@
 package net.biologeek.bot.plugin.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.startup.Tomcat;
-import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.embedded.DataSourceFactory;
-import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import net.biologeek.bot.wiki.client.Country;
+import net.biologeek.bot.wiki.client.Wikipedia;
+import net.biologeek.bot.wiki.client.Wikipedia.WikipediaBuilder;
 
 @Configuration
 @ComponentScan("net.biologeek.bot")
@@ -35,10 +38,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * Datasource building consists of JNDI lookup over comp/env/jdbc/wikibot
  */
-public class ApplicationConfig {
+public class ApplicationConfig implements EnvironmentAware{
 
-	@Value("${jdbc.connection.jndiname}")
-	protected String connectionJndiName;
 
 	@Value("${jdbc.connection.driver}")
 	protected String connectionDriverClassName;
@@ -55,43 +56,34 @@ public class ApplicationConfig {
 	@Value("${hibernate.dialect}")
 	private String dialect;
 
+	@Autowired
+	private Environment env;
+
+	@Value("${country.restrictions}")
+	private String country;
+
+	@Value("${address.baseurl}")
+	private String baseURL;
+
+	@Value("${api.maxlogins}")
+	private String maxLogins;
+	
 	@Bean
 	public EmbeddedServletContainerFactory tomcat() {
-		return new TomcatEmbeddedServletContainerFactory() {
-
-			protected TomcatEmbeddedServletContainer getTomcatEmbeddedServletContainer(Tomcat tomcat) {
-				tomcat.enableNaming();
-				return super.getTomcatEmbeddedServletContainer(tomcat);
-			}
-
-			@Override
-			protected void postProcessContext(Context context) {
-				ContextResource resource = new ContextResource();
-				resource.setName(connectionJndiName);
-				resource.setType(DataSource.class.getName());
-				resource.setProperty("driverClassName", connectionDriverClassName);
-				resource.setProperty("url", connectionURL);
-				resource.setProperty("password", connectionPassword);
-				resource.setProperty("username", connectionUserName);
-				resource.setType("javax.sql.DataSource");
-				context.getNamingResources().addResource(resource);
-			}
-		};
+		return new TomcatEmbeddedServletContainerFactory();
 	}
 
 	@Bean
 	public DataSource datasource() throws Exception {
-		JndiObjectFactoryBean bean = new JndiObjectFactoryBean();
-		bean.setJndiName("java:comp/env/" + connectionJndiName);
+		BasicDataSource dataSource = new BasicDataSource();
 
-		try {
-			bean.afterPropertiesSet();
-		} catch (IllegalArgumentException | NamingException e) {
-			e.printStackTrace();
-			throw new Exception("Could not find JNDI datasource");
-		}
 
-		return (DataSource) bean.getObject();
+		dataSource.setDriverClassName(env.getProperty("jdbc.connection.driver"));
+		dataSource.setUrl(env.getProperty("jdbc.connection.url"));
+		dataSource.setUsername(env.getProperty("jdbc.connection.user"));
+		dataSource.setPassword(env.getProperty("jdbc.connection.password"));
+
+		return dataSource;
 	}
 
 	@Bean
@@ -119,6 +111,41 @@ public class ApplicationConfig {
 		props.put("hibernate.hbm2ddl.auto", "update");
 		
 		return props;
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		env = environment;		
+	}
+	
+	@Bean
+	Wikipedia wikipedia(){
+		Wikipedia.WikipediaBuilder builder = new WikipediaBuilder(null);
+		if (country != null && !country.equals("")){
+			List<Country> countries = processCountries(country);
+			builder.languages(countries);			
+		}
+		
+		if (baseURL != null && !baseURL.equals("")){
+			builder.baseURL(baseURL);
+		}
+		
+		if (maxLogins != null && !maxLogins.equals("")){
+			builder.maxLogins(Integer.valueOf(maxLogins));
+		}
+		
+		return builder.build();
+	}
+
+	private List<Country> processCountries(String country2) {
+		List<Country> res = new ArrayList<>();
+		String[] splited = country2.split(";");
+		for (String elt : splited){
+			if (Country.contains(elt)){
+				res.add(Country.valueOf(elt));
+			}
+		}
+		return res;
 	}
 
 }

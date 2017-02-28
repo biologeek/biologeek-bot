@@ -1,7 +1,5 @@
 package net.biologeek.bot.plugin.beans;
 
-import org.springframework.core.annotation.AliasFor;
-
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.services.PluginInstallService;
 

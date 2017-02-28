@@ -2,11 +2,13 @@ package net.biologeek.bot.plugin.beans;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.OneToOne;
 
+import org.springframework.data.annotation.Id;
+
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
-import net.biologeek.bot.plugin.install.PluginInstaller;
-import net.biologeek.bot.plugin.services.PluginInstallService;
+import net.biologeek.bot.plugin.install.AbstractPluginInstaller;
 
 /**
  * Represents an installed plugin, stored in database
@@ -16,19 +18,21 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
 @Entity
 public class PluginBean {
 
+	@Id
+	@GeneratedValue
 	private long pluginId;
 	private String name;
 	private String description;
 	@SuppressWarnings("rawtypes")
 	@OneToOne(fetch = FetchType.EAGER)
 	private PluginBatch batch;
-	
-	private PluginInstaller installer;
+
+	@OneToOne
+	private AbstractPluginInstaller installer;
 
 	private String jarFile;
-	private Class<? extends PluginInstaller> installerClass;
+	private Class<? extends AbstractPluginInstaller> installerClass;
 	private Class<?> pluginClass;
-	
 
 	@SuppressWarnings("rawtypes")
 	public PluginBatch getBatch() {
@@ -47,19 +51,19 @@ public class PluginBean {
 		this.jarFile = jarFile;
 	}
 
-	public PluginInstaller getInstaller() {
+	public AbstractPluginInstaller getInstaller() {
 		return installer;
 	}
 
-	public void setInstaller(PluginInstaller installer) {
+	public void setInstaller(AbstractPluginInstaller installer) {
 		this.installer = installer;
 	}
 
-	public Class<? extends PluginInstaller> getInstallerClass() {
+	public Class<? extends AbstractPluginInstaller> getInstallerClass() {
 		return installerClass;
 	}
 
-	public void setInstallerClass(Class<? extends PluginInstaller> installerClass) {
+	public void setInstallerClass(Class<? extends AbstractPluginInstaller> installerClass) {
 		this.installerClass = installerClass;
 	}
 

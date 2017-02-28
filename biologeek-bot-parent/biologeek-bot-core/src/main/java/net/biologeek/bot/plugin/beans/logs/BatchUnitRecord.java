@@ -3,8 +3,13 @@ package net.biologeek.bot.plugin.beans.logs;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.springframework.data.annotation.Id;
+
+import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 
 @Entity
 public class BatchUnitRecord {
@@ -14,7 +19,8 @@ public class BatchUnitRecord {
 	private Date creationDate;
 	private Date beginningDate;
 	private Date endDate;
-
+	@ManyToOne(fetch=FetchType.LAZY)
+	private PluginBatch recordBatch;
 	private int exitCode;
 
 	private String logOutput;

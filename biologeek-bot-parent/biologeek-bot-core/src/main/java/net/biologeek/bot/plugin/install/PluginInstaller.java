@@ -8,6 +8,7 @@ import net.biologeek.bot.plugin.beans.PluginBean;
 public interface PluginInstaller {
 	
 
+	
 	public abstract void afterSaveBatch();
 	public abstract void afterRemoveBatch();
 
