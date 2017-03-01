@@ -22,7 +22,7 @@ public abstract class ArticleElement<T> {
 
 	@Id@GeneratedValue
 	protected long id;
-	private String title;
+	protected String title;
 
 	public ArticleElement() {
 		super();
@@ -47,4 +47,7 @@ public abstract class ArticleElement<T> {
 	public abstract T getValue();
 
 	public abstract void setValue(T value);
+ 
+	
+	
 }

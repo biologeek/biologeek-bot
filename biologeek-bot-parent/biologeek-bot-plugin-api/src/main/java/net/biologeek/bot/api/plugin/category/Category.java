@@ -3,6 +3,7 @@ package net.biologeek.bot.api.plugin.category;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import net.biologeek.bot.api.plugin.serialization.CategoryContentQueryType;
 import net.biologeek.bot.api.plugin.serialization.Errorable;
 
 /**
@@ -21,6 +22,7 @@ public abstract class Category<T> implements Errorable {
 
 	@JsonProperty("batchcomplete")
 	private String batchcomplete;
+	private String cmContinue;
 
 	public String getBatchcomplete() {
 		return batchcomplete;
@@ -29,6 +31,24 @@ public abstract class Category<T> implements Errorable {
 	public void setBatchcomplete(String batchcomplete) {
 		this.batchcomplete = batchcomplete;
 	}
-	
+
+	public String getCmContinue() {
+		return cmContinue;
+	}
+
+	public void setCmContinue(String cmContinue) {
+		this.cmContinue = cmContinue;
+	}
 	public abstract void setValue(T value);
+	
+	public static class CategoryFactory {
+		public static Category<?> getInstance(CategoryContentQueryType type) {
+			switch (type) {
+			case categorymembers:
+				return new CategoryMembers();
+			default:
+				return null;
+			}
+		}
+	}
 }

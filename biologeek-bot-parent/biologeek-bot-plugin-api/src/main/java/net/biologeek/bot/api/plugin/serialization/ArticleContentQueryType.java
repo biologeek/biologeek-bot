@@ -1,6 +1,6 @@
 package net.biologeek.bot.api.plugin.serialization;
 
-public enum ContentQueryType {
+public enum ArticleContentQueryType {
 
 	extract, categories, categoryinfo, contributors, deletedrevisions, duplicatefiles, //
 	extlinks, extracts, fileusage, flowinfo, globalusage, imageinfo, images, info, //

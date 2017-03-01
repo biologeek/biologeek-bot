@@ -35,11 +35,13 @@ public class ArticleDeserializer extends JsonDeserializer<Article> {
 		ObjectNode root = map.readTree(arg0);
 		Iterator<JsonNode> it = root.get("query").get("pages").iterator();
 		
-		System.out.println("AAA " + root);
+		/*
+		 * First to create the correct object we have to determine which object to create
+		 */
 		while (it.hasNext()) {
 			JsonNode node = it.next();
 			
-			for (ContentQueryType type : ContentQueryType.values()){
+			for (ArticleContentQueryType type : ArticleContentQueryType.values()){
 				if (node.has(type.name())){
 					article = ArticleFactory.getInstance(type);
 					article.setValue(node.get(type.name()).toString()); // A little tricky

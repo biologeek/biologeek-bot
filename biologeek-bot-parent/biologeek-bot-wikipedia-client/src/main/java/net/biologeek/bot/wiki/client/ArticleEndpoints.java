@@ -12,7 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-public interface WikipediaEndpoints {
+public interface ArticleEndpoints {
 
 	@GET(value = "api.php?action=query&prop=")
 
@@ -28,6 +28,4 @@ public interface WikipediaEndpoints {
 	@GET(value = "api.php?action=query&prop=categories&format=json")
 	Call<ArticleCategories> getArticleCategories(@Query("titles") String titles);
 
-	@GET(value = "api.php?action=query&list=categorymembers&format=json")
-	Call<? extends Category<?>> getCategoryMembers(@Query("cmtitle") String title);
 }

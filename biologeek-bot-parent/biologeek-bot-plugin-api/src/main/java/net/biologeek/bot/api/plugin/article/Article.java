@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import net.biologeek.bot.api.plugin.article.ArticleContent;
 import net.biologeek.bot.api.plugin.serialization.ArticleDeserializer;
-import net.biologeek.bot.api.plugin.serialization.ContentQueryType;
+import net.biologeek.bot.api.plugin.serialization.ArticleContentQueryType;
 
 /**
  * Represents a raw Wikipedia article response. Example JSON :
@@ -72,7 +72,7 @@ public abstract class Article<T> {
 	public abstract void setValue(T value);
 
 	public static class ArticleFactory {
-		public static Article<?> getInstance(ContentQueryType type) {
+		public static Article<?> getInstance(ArticleContentQueryType type) {
 			switch (type) {
 
 			case extract:

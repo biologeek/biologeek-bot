@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import net.biologeek.bot.api.plugin.article.ArticleCategories;
 import net.biologeek.bot.api.plugin.article.ArticleContent;
 import net.biologeek.bot.api.plugin.category.Category;
+import net.biologeek.bot.api.plugin.category.CategoryMembers;
 import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
 import net.biologeek.bot.api.plugin.login.Login;
 import net.biologeek.bot.api.plugin.login.Login.LoginStatus;
@@ -15,6 +16,8 @@ import net.biologeek.bot.api.plugin.login.Token;
 import net.biologeek.bot.api.plugin.login.User;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
 import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
+import net.biologeek.bot.wiki.client.exceptions.WikiException;
+import net.biologeek.bot.wiki.client.utils.Constants;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
@@ -33,7 +36,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class Wikipedia {
 
 	private List<Country> countries;
-	WikipediaEndpoints service;
+	ArticleEndpoints articleEndpoints;
+	CategoriesEndpoints categoryEndpoints;
 	private String baseURL;
 	private String userAgent;
 	protected String token;
@@ -60,7 +64,7 @@ public class Wikipedia {
 	 */
 	public Wikipedia login() throws NotRetriableException {
 		if (token == null || token.isEmpty()) {
-			Call<Token> token = service.getToken();
+			Call<Token> token = articleEndpoints.getToken();
 			try {
 
 				Token executedBody = token.execute().body();
@@ -71,7 +75,7 @@ public class Wikipedia {
 						&& executedBody.getQuery().getTokens().getLoginToken().length() > tokenMinLength) {
 					// TODO parametrize token minLength
 
-					retrofit2.Response<Login> loginResult = service
+					retrofit2.Response<Login> loginResult = articleEndpoints
 							.login(user.getUsername(), new Login().new LoginBody(user.getPassword(), user.getToken()))
 							.execute();
 					if (loginResult.isSuccessful() && (loginResult.body().getWarnings() != null //
@@ -106,36 +110,72 @@ public class Wikipedia {
 	 * @throws APIException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Category getCategoryMembers(String title) throws APIException {
+	public CategoryMembers getCategoryMembers(String title, String continueParam, boolean getAll) throws APIException {
 		try {
 			if (!title.startsWith("Category:"))
-				title = "Category:" + title;
-			Response<Category<List<CategoryMember>>> response = (Response<Category<List<CategoryMember>>>) this
-					.getService().getCategoryMembers(title).execute();
+				title = Constants.CATEGORY_TITLE_PREFIX_EN + title;
+			Response<CategoryMembers> response = (Response<CategoryMembers>) this.getCategoryEndpoints()
+					.getCategoryMembers(title).execute();
 			return response.body();
 		} catch (IOException e) {
 			throw new APIException(e.getMessage());
 		}
 	}
 
-	public ArticleContent getArticleContent(String title) throws Exception {
+	/**
+	 * 
+	 * Returns the categories a category with title {@link title} belongs to.
+	 * 
+	 * The 2 last parameters are related to 
+	 * 
+	 * @param title
+	 * @param continueParam
+	 * @param getAll
+	 * @return
+	 * @throws APIException 
+	 * @throws IOException
+	 */
+	public CategoryMembers getCategoriesIBelongTo(String title, String continueParam, boolean getAll) throws APIException {
+		if (title.startsWith("Category:"))
+			title = Constants.CATEGORY_TITLE_PREFIX_EN + title;
+
+		String cmcontinue = null;
+		CategoryMembers result = new CategoryMembers();
 		try {
-			Response<ArticleContent> response = this.getService().getArticle(title).execute();
-			return response.body();
+			if (getAll) {
+				do {
+					Response<CategoryMembers> response = this.getCategoryEndpoints()//
+							.getCategoriesIBelongTo(title, cmcontinue)//
+							.execute();
+					result.getValue().addAll(response.body().getValue());
+					cmcontinue = response.body().getCmContinue();
+				} while (cmcontinue != null || !cmcontinue.equals(""));
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new APIException(e.getMessage());
 		}
-		return null;
+		return result;
+
 	}
 
-	public ArticleCategories getArticleCategories(String title) throws Exception {
+	public ArticleContent getArticleContent(String title) throws WikiException {
 		try {
-			Response<ArticleCategories> response = this.getService().getArticleCategories(title).execute();
+			Response<ArticleContent> response = this.getArticleEndpoints().getArticle(title).execute();
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new WikiException(e.getMessage());
 		}
-		return null;
+	}
+
+	public ArticleCategories getArticleCategories(String title) throws WikiException {
+		try {
+			Response<ArticleCategories> response = this.getArticleEndpoints().getArticleCategories(title).execute();
+			return response.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WikiException(e.getMessage());
+		}
 	}
 
 	private void handleErrorResponses(LoginStatus login) throws NotRetriableException, RetryCallException {
@@ -208,12 +248,19 @@ public class Wikipedia {
 		}
 
 		public Wikipedia build() {
-			instance.setService(//
+			instance.setArticleEndpoints(//
 					new Retrofit.Builder()//
 							.baseUrl(instance.getBaseURL())//
 							.addConverterFactory(JacksonConverterFactory.create())//
 							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
-							.create(WikipediaEndpoints.class)//
+							.create(ArticleEndpoints.class)//
+			);
+			instance.setCategoryEndpoints(//
+					new Retrofit.Builder()//
+							.baseUrl(instance.getBaseURL())//
+							.addConverterFactory(JacksonConverterFactory.create())//
+							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
+							.create(CategoriesEndpoints.class)//
 			);
 			return instance;
 		}
@@ -259,14 +306,6 @@ public class Wikipedia {
 
 	public void setCountries(List<Country> country2) {
 		this.countries = country2;
-	}
-
-	public WikipediaEndpoints getService() {
-		return service;
-	}
-
-	public void setService(WikipediaEndpoints service) {
-		this.service = service;
 	}
 
 	public String getBaseURL() {
@@ -331,6 +370,22 @@ public class Wikipedia {
 
 	public void setLogger(Logger logger) {
 		this.logger = logger;
+	}
+
+	public ArticleEndpoints getArticleEndpoints() {
+		return articleEndpoints;
+	}
+
+	public void setArticleEndpoints(ArticleEndpoints articleEndpoints) {
+		this.articleEndpoints = articleEndpoints;
+	}
+
+	public CategoriesEndpoints getCategoryEndpoints() {
+		return categoryEndpoints;
+	}
+
+	public void setCategoryEndpoints(CategoriesEndpoints categoryEndpoints) {
+		this.categoryEndpoints = categoryEndpoints;
 	}
 
 }

@@ -1,5 +1,6 @@
 package net.biologeek.bot.api.plugin.category;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,6 +10,11 @@ import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
 public class CategoryMembers extends Category<List<CategoryMember>> {
 
 	private List<CategoryMember> value;
+	
+	public CategoryMembers() {
+		super();
+		value = new ArrayList<>();
+	}
 
 	@Override
 	public void setValue(List<CategoryMember> value) {

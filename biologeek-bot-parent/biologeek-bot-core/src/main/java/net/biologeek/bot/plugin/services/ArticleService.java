@@ -9,7 +9,8 @@ import net.biologeek.bot.plugin.repositories.ArticleRepository;
 public class ArticleService<T> {
 	
 	@Autowired
-	ArticleRepository<T> repository;
+	private ArticleRepository<T> repository;
+	 
 	
 	public T save (T arg0){
 		return repository.save(arg0);
@@ -19,4 +20,5 @@ public class ArticleService<T> {
 		return repository.findOne(id);
 	}
 
+	
 }
