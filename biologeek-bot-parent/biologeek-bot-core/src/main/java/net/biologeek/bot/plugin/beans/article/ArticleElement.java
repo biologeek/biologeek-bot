@@ -5,6 +5,9 @@ import javax.persistence.MappedSuperclass;
 
 import org.springframework.data.annotation.Id;
 
+import net.biologeek.bot.api.plugin.serialization.ArticleContentQueryType;
+import net.biologeek.bot.plugin.beans.Prop;
+
 /**
  * Represents a raw Wikipedia article response. Example JSON :
  * 
@@ -17,10 +20,11 @@ import org.springframework.data.annotation.Id;
  * @author xcaron
  *
  */
-@MappedSuperclass 
+@MappedSuperclass
 public abstract class ArticleElement<T> {
 
-	@Id@GeneratedValue
+	@Id
+	@GeneratedValue
 	protected long id;
 	protected String title;
 
@@ -47,7 +51,27 @@ public abstract class ArticleElement<T> {
 	public abstract T getValue();
 
 	public abstract void setValue(T value);
- 
-	
-	
+
+	public static class ArticleFactory {
+		public static ArticleElement<?> getInstance(Prop type) {
+			switch (type) {
+			case CONTENT:
+				return new ArticleContent();
+			case BELONG_TO_CATEGORIES:
+				return new ArticleCategories();
+			case CONTRIBUTORS:
+				break;
+			case MODIFICATION_HISTORY:
+				break;
+			case SUB_CATEGORIES:
+				throw new IllegalArgumentException("Articles do not have categories !");
+			case TITLE:
+				break;
+			default:
+				return null;
+			}
+			return null;
+		}
+	}
+
 }

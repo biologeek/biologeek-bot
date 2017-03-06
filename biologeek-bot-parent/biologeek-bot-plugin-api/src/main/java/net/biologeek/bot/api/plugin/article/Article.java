@@ -24,7 +24,7 @@ import net.biologeek.bot.api.plugin.serialization.ArticleContentQueryType;
 @JsonDeserialize(using = ArticleDeserializer.class)
 public abstract class Article<T> {
 
-	private String batchComplete;
+	private String clcontinue;
 
 	@JsonProperty("pageid")
 	private String pageid;
@@ -37,12 +37,12 @@ public abstract class Article<T> {
 		super();
 	}
 
-	public String getBatchComplete() {
-		return batchComplete;
+	public String getClcontinue() {
+		return clcontinue;
 	}
 
-	public void setBatchComplete(String batchComplete) {
-		this.batchComplete = batchComplete;
+	public void setClcontinue(String clcontinue) {
+		this.clcontinue = clcontinue;
 	}
 
 	public String getPageid() {

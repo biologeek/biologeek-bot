@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import net.biologeek.bot.api.plugin.article.Article;
 import net.biologeek.bot.api.plugin.article.Article.ArticleFactory;
+import net.biologeek.bot.api.plugin.article.ArticleCategories;
+import net.biologeek.bot.api.plugin.article.ArticleCategory;
 
-public class ArticleDeserializer extends JsonDeserializer<Article> {
+public class ArticleDeserializer extends JsonDeserializer<Article<?>> {
 
 	/**
 	 * 
@@ -26,7 +28,7 @@ public class ArticleDeserializer extends JsonDeserializer<Article> {
 	
 	
 	@Override
-	public Article deserialize(JsonParser arg0, DeserializationContext arg1)
+	public Article<?> deserialize(JsonParser arg0, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 		Article article = null;
 
@@ -44,7 +46,7 @@ public class ArticleDeserializer extends JsonDeserializer<Article> {
 			for (ArticleContentQueryType type : ArticleContentQueryType.values()){
 				if (node.has(type.name())){
 					article = ArticleFactory.getInstance(type);
-					article.setValue(node.get(type.name()).toString()); // A little tricky
+					article.setValue(deserializeValueNode(node.get(type.name()), type)); // A little tricky
 				}
 			}
 			if (node.has("pageid")) {
@@ -58,9 +60,34 @@ public class ArticleDeserializer extends JsonDeserializer<Article> {
 			}
 
 		}
-		article.setBatchComplete(root.get("batchcomplete").toString());
+		if (root.has("continue")){
+			if (root.get("continue").has("clcontinue")){
+				article.setClcontinue(root.get("continue").get("clconinue").toString());
+			}
+		}
 		
 		return article;
+	}
+
+
+	private Object deserializeValueNode(JsonNode jsonNode, ArticleContentQueryType type) {
+		switch (type){
+		case extract : 
+			return jsonNode.toString();
+		case categories :
+			Iterator<JsonNode> nodes = jsonNode.iterator();
+			ArticleCategories categories = new ArticleCategories();
+			while(nodes.hasNext()){				
+				JsonNode node = nodes.next();
+				ArticleCategory cat = new ArticleCategory()//
+						.title(node.get("title").toString());
+				categories.getValue().add(cat);
+			}
+			return categories;
+		default:
+			break;
+		}
+		return null;
 	}
 
 }

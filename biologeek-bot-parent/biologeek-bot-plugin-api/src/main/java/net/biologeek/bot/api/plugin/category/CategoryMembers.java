@@ -7,10 +7,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
 
+/**
+ * CategoryMembers contains a list of categories that belong to the current
+ * category or to which it belongs
+ * <br><br>
+ * It is used for listing categories of a category.
+ * <br><br>
+ * Attribute cmcontinue serves for paging. <br>Indeed, by default mediawiki API
+ * returns only 10 results and provides cmcontinue to get next items.
+ *
+ */
 public class CategoryMembers extends Category<List<CategoryMember>> {
 
 	private List<CategoryMember> value;
-	
+
 	public CategoryMembers() {
 		super();
 		value = new ArrayList<>();

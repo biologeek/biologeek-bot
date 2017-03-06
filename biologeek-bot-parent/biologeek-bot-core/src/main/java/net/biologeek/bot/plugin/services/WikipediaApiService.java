@@ -1,13 +1,11 @@
 package net.biologeek.bot.plugin.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.biologeek.bot.plugin.beans.Prop;
 import net.biologeek.bot.plugin.beans.article.ArticleCategories;
-import net.biologeek.bot.plugin.beans.article.ArticleCategory;
 import net.biologeek.bot.plugin.beans.article.ArticleContent;
+import net.biologeek.bot.plugin.beans.article.ArticleContributors;
 import net.biologeek.bot.plugin.beans.article.ArticleElement;
 import net.biologeek.bot.plugin.converter.ArticleConverter;
 import net.biologeek.bot.wiki.client.Wikipedia;
@@ -18,16 +16,15 @@ public class WikipediaApiService {
 	@Autowired
 	Wikipedia wikipedia;
 	@Autowired
-	private ArticleService articleService;
+	private ArticleService<?> articleService;
 
 	public WikipediaApiService() {
 
 	}
 
-	public ArticleElement getArticleElement(String articleTitle, Prop prop, String[] extraArgs) {
-		ArticleElement article = null;
+	public ArticleElement<?> getArticleElement(String articleTitle, Prop prop, String[] extraArgs) {
+		ArticleElement<?> article = null;
 
-		article = getArticleInstance(prop, article);
 		try {
 			switch (prop) {
 			case CONTENT:
@@ -49,42 +46,21 @@ public class WikipediaApiService {
 		return article;
 	}
 
-	private ArticleElement getArticleContributors(String articleTitle) {
+	private ArticleContributors getArticleContributors(String articleTitle) {
+		return ArticleConverter.convert(wikipedia.getArticleContributors(articleTitle));
+	}
+
+	private ArticleElement<?> getArticleModificationHistory(String articleTitle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private ArticleElement getArticleModificationHistory(String articleTitle) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private ArticleElement getArticleCategories(String articleTitle) throws WikiException {
+	private ArticleCategories getArticleCategories(String articleTitle) throws WikiException {
 		return ArticleConverter.convert(wikipedia.getArticleCategories(articleTitle));
 	}
 
 	private ArticleContent getArticleContent(String articleTitle) throws WikiException {
 		return ArticleConverter.convert(wikipedia.getArticleContent(articleTitle));
-	}
-
-	private ArticleElement getArticleInstance(Prop prop, ArticleElement article) {
-		switch (prop) {
-		case CONTENT:
-			article = new ArticleContent();
-			break;
-		case BELONG_TO_CATEGORIES:
-			article = new ArticleCategories();
-			break;
-		case CONTRIBUTORS:
-			break;
-		case MODIFICATION_HISTORY:
-			break;
-		case SUB_CATEGORIES:
-			break;
-		case TITLE:
-			break;
-		}
-		return article;
 	}
 
 	public Wikipedia getWikipedia() {

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import net.biologeek.bot.api.plugin.article.ArticleCategories;
 import net.biologeek.bot.api.plugin.article.ArticleContent;
+import net.biologeek.bot.api.plugin.article.ArticleContributors;
 import net.biologeek.bot.api.plugin.category.Category;
 import net.biologeek.bot.api.plugin.category.CategoryMembers;
 import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
@@ -29,8 +30,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 /**
  * Wikipedia API client with high-level methods to access article read and
  * write/edit functions
- * 
- * @author xavier
+ * <br><br>
+ * This class is the unique entry point for logging in and out, retrieving articles, categories, users, reading and editing
  *
  */
 public class Wikipedia {
@@ -104,7 +105,6 @@ public class Wikipedia {
 	/**
 	 * Returns raw response from mediawiki API mapped into an object.
 	 * 
-	 * 
 	 * @param title
 	 * @return
 	 * @throws APIException
@@ -125,17 +125,27 @@ public class Wikipedia {
 	/**
 	 * 
 	 * Returns the categories a category with title {@link title} belongs to.
-	 * 
-	 * The 2 last parameters are related to 
+	 * <br>
+	 * <br>
+	 * The 2 last parameters are related to mediawiki default result size.<br>
+	 * Continue param is the last category id retrieved and servers to get next
+	 * subcategories <br>
+	 * <br>
+	 * If you want to get all result, just set {@link getall} parameter to true
 	 * 
 	 * @param title
+	 *            the title of the category
 	 * @param continueParam
+	 *            a string to add to request to get next categories. Example :
+	 *            "subcat|0403423d374b4d2f042d2f044527574b011301848f10|117136"
 	 * @param getAll
-	 * @return
-	 * @throws APIException 
+	 *            boolean to get all result for this category
+	 * @return a {@link CategoryMembers} object containing desired categories
+	 * @throws APIException
 	 * @throws IOException
 	 */
-	public CategoryMembers getCategoriesIBelongTo(String title, String continueParam, boolean getAll) throws APIException {
+	public CategoryMembers getCategoriesIBelongTo(String title, String continueParam, boolean getAll)
+			throws APIException {
 		if (title.startsWith("Category:"))
 			title = Constants.CATEGORY_TITLE_PREFIX_EN + title;
 
@@ -143,6 +153,7 @@ public class Wikipedia {
 		CategoryMembers result = new CategoryMembers();
 		try {
 			if (getAll) {
+				// Loop over to get all possible responses
 				do {
 					Response<CategoryMembers> response = this.getCategoryEndpoints()//
 							.getCategoriesIBelongTo(title, cmcontinue)//
@@ -150,14 +161,24 @@ public class Wikipedia {
 					result.getValue().addAll(response.body().getValue());
 					cmcontinue = response.body().getCmContinue();
 				} while (cmcontinue != null || !cmcontinue.equals(""));
+			} else {
+				result = this.getCategoryEndpoints()//
+						.getCategoriesIBelongTo(title, cmcontinue)//
+						.execute().body();
 			}
 		} catch (IOException e) {
 			throw new APIException(e.getMessage());
 		}
 		return result;
-
 	}
 
+	/**
+	 * Returns an {@link ArticleContent} object containing title and article body 
+	 * 
+	 * @param title the title
+	 * @return
+	 * @throws WikiException in case it could not retrieve the article
+	 */
 	public ArticleContent getArticleContent(String title) throws WikiException {
 		try {
 			Response<ArticleContent> response = this.getArticleEndpoints().getArticle(title).execute();
@@ -168,6 +189,12 @@ public class Wikipedia {
 		}
 	}
 
+	/**
+	 * Returns the categories the article belongs to
+	 * @param title the title of the article
+	 * @return an {@link ArticleCategories} object encapsulating a list of categories
+	 * @throws WikiException
+	 */
 	public ArticleCategories getArticleCategories(String title) throws WikiException {
 		try {
 			Response<ArticleCategories> response = this.getArticleEndpoints().getArticleCategories(title).execute();
@@ -386,6 +413,10 @@ public class Wikipedia {
 
 	public void setCategoryEndpoints(CategoriesEndpoints categoryEndpoints) {
 		this.categoryEndpoints = categoryEndpoints;
+	}
+
+	public ArticleContributors getArticleContributors(String articleTitle) {
+		return null;
 	}
 
 }
