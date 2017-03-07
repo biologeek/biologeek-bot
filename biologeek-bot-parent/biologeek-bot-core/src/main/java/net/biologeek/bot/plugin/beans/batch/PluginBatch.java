@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.springframework.batch.core.Job;
 import org.springframework.data.annotation.Id;
 
 import net.biologeek.bot.plugin.beans.Period;
@@ -22,7 +23,7 @@ import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
  * @param <T> The type of object processed (articles, categories, users, ...) 
  */
 @Entity
-public abstract class PluginBatch<T> implements Batch {
+public abstract class PluginBatch implements Batch {
 
 	@Id@GeneratedValue
 	private long id;
@@ -34,7 +35,7 @@ public abstract class PluginBatch<T> implements Batch {
 	/**
 	 * Batch concrete class
 	 */
-	private Class<? extends PluginBatch<?>> batchClass;
+	private Class<? extends Job> jobClass;
 	/**
 	 * The period of time over which the batch will be able to run
 	 */
@@ -56,12 +57,6 @@ public abstract class PluginBatch<T> implements Batch {
 	@OneToMany(fetch=FetchType.LAZY)
 	protected List<BatchUnitRecord> logs;
 
-	/**
-	 * Method called to launch the batch
-	 * 
-	 * @param params
-	 */
-	public abstract void execute(String[] params);
 
 	public Date getLastLaunchTime() {
 		return lastLaunchTime;
@@ -79,13 +74,6 @@ public abstract class PluginBatch<T> implements Batch {
 		this.plugin = plugin;
 	}
 
-	public Class<? extends PluginBatch<?>> getBatchClass() {
-		return batchClass;
-	}
-
-	public void setBatchClass(Class<? extends PluginBatch<?>> batchClass) {
-		this.batchClass = batchClass;
-	}
 
 	public Period getBatchPeriod() {
 		return batchPeriod;
@@ -101,5 +89,29 @@ public abstract class PluginBatch<T> implements Batch {
 
 	public void setTimeFrequency(double timeFrequency) {
 		this.timeFrequency = timeFrequency;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Class<? extends Job> getJobClass() {
+		return jobClass;
+	}
+
+	public void setJobClass(Class<? extends Job> jobClass) {
+		this.jobClass = jobClass;
+	}
+
+	public List<BatchUnitRecord> getLogs() {
+		return logs;
+	}
+
+	public void setLogs(List<BatchUnitRecord> logs) {
+		this.logs = logs;
 	}
 }

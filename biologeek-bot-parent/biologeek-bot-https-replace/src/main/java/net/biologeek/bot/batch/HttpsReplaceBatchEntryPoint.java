@@ -9,7 +9,7 @@ import net.biologeek.bot.install.HttpsReplacePluginInstall;
 import net.biologeek.bot.plugin.beans.Plugin;
 
 @SpringBootApplication
-public class HttpsReplaceBatchEntryPoint extends PluginBatch {
+public class HttpsReplaceBatchEntryPoint {
 	
 	PluginBean bean;
 
