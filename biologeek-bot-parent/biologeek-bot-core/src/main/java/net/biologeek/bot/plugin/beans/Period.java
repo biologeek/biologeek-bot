@@ -13,6 +13,10 @@ public class Period {
 	private Date end;
 	
 	
+	public Period(Date batchPeriodBegin, Date batchPeriodEnd) {
+		this.beginning = batchPeriodBegin;
+		this.end = batchPeriodEnd;
+	}
 	public Date getBeginning() {
 		return beginning;
 	}

@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import net.biologeek.bot.api.plugin.article.ArticleCategory;
-
-
 @Entity
 public class ArticleCategories extends ArticleElement<List<ArticleCategory>> {
 	

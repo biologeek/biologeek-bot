@@ -16,7 +16,7 @@ import org.springframework.batch.item.ItemWriter;
  *
  * @param <T>
  */
-public abstract class SpringBatchPluginBatch<T> extends PluginBatch<T>  {
+public abstract class SpringBatchPluginBatch<T> extends PluginBatch  {
 
 	/**
 	 * Spring Batch Reader
@@ -58,7 +58,4 @@ public abstract class SpringBatchPluginBatch<T> extends PluginBatch<T>  {
 	public void setSteps(LinkedList<Step> steps) {
 		this.steps = steps;
 	}
-	
-	
-	
 }

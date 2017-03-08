@@ -1,5 +1,7 @@
 package net.biologeek.bot.plugin.install;
 
+import java.io.FileNotFoundException;
+
 import net.biologeek.bot.plugin.beans.PluginBean;
 
 /**
@@ -23,6 +25,6 @@ public interface PluginInstaller {
 
 	
 	public abstract void setAdminPanelHtmlTemplate(String tpl);
-	public abstract void setPropertiesFile(String tpl);
+	public abstract void setPropertiesFile(String tpl) throws FileNotFoundException;
 
 }

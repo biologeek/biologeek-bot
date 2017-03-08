@@ -3,9 +3,8 @@ package net.biologeek.bot.plugin.beans;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.OneToOne;
-
-import org.springframework.data.annotation.Id;
 
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.install.AbstractPluginInstaller;

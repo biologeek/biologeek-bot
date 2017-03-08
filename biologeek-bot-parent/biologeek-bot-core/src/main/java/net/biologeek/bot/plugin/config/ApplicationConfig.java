@@ -33,8 +33,8 @@ import net.biologeek.bot.wiki.client.Wikipedia.WikipediaBuilder;
 @ComponentScan("net.biologeek.bot")
 @EnableJpaRepositories
 @EnableTransactionManagement
-@PropertySources({ // @PropertySource("file://${app.parameters}/configuration.properties"),
-		@PropertySource("file:${app.parameters}/bdd.properties") })
+//@PropertySources({ // @PropertySource("file://${app.parameters}/configuration.properties"),
+	//	@PropertySource("file:${app.parameters}/bdd.properties") })
 /**
  * Datasource building consists of JNDI lookup over comp/env/jdbc/wikibot
  */

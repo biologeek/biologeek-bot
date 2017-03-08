@@ -1,14 +1,22 @@
 package net.biologeek.bot.plugin.install;
 
-import javax.persistence.OneToOne;
+import javax.persistence.Entity;
 
 import net.biologeek.bot.plugin.beans.PluginBean;
 
+@Entity
 public abstract class AbstractPluginInstaller implements PluginInstaller {
 	
 	
-	@OneToOne
-	private PluginBean bean;
+	protected PluginBean bean;
+
+	public AbstractPluginInstaller(PluginBean bean2) {
+		this.bean = bean2;
+	}
+
+	public AbstractPluginInstaller() {
+		this.bean = null;
+	}
 
 	public PluginBean getBean() {
 		return bean;

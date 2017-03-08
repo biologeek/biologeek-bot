@@ -7,11 +7,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-
-import org.springframework.batch.core.Job;
-import org.springframework.data.annotation.Id;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
@@ -20,9 +20,9 @@ import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
 /**
  * An abstract plugin batch with main batch parameters, attached plugin, and batch unit records.
  *
- * @param <T> The type of object processed (articles, categories, users, ...) 
  */
 @Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class PluginBatch implements Batch {
 
 	@Id@GeneratedValue
@@ -32,10 +32,6 @@ public abstract class PluginBatch implements Batch {
 	 */
 	@OneToOne(fetch = FetchType.EAGER)
 	protected PluginBean plugin;
-	/**
-	 * Batch concrete class
-	 */
-	private Class<? extends Job> jobClass;
 	/**
 	 * The period of time over which the batch will be able to run
 	 */
@@ -57,6 +53,17 @@ public abstract class PluginBatch implements Batch {
 	@OneToMany(fetch=FetchType.LAZY)
 	protected List<BatchUnitRecord> logs;
 
+
+	public PluginBatch() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public PluginBatch(PluginBean bean) {
+		super();
+		this.plugin = bean;
+	}
 
 	public Date getLastLaunchTime() {
 		return lastLaunchTime;
@@ -97,14 +104,6 @@ public abstract class PluginBatch implements Batch {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public Class<? extends Job> getJobClass() {
-		return jobClass;
-	}
-
-	public void setJobClass(Class<? extends Job> jobClass) {
-		this.jobClass = jobClass;
 	}
 
 	public List<BatchUnitRecord> getLogs() {

@@ -1,11 +1,11 @@
 package net.biologeek.bot.plugin.beans.article;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
-import org.springframework.data.annotation.Id;
-
-import net.biologeek.bot.api.plugin.serialization.ArticleContentQueryType;
 import net.biologeek.bot.plugin.beans.Prop;
 
 /**
@@ -20,11 +20,11 @@ import net.biologeek.bot.plugin.beans.Prop;
  * @author xcaron
  *
  */
-@MappedSuperclass
+@Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class ArticleElement<T> {
 
-	@Id
-	@GeneratedValue
+	@Id@GeneratedValue
 	protected long id;
 	protected String title;
 

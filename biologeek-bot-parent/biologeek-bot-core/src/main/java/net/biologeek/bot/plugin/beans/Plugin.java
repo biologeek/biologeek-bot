@@ -7,6 +7,7 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
  * Every plugin must implement this interface
  *
  */
+@Deprecated
 public @interface Plugin {
 
 	String jarFile() default "";

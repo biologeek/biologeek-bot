@@ -25,13 +25,13 @@ import sun.misc.URLClassPath;
 @Service
 public abstract class PluginInstallService {
 
-	ServiceLoader<PluginBatch> pluginBatchScanner;
+	protected ServiceLoader<PluginBatch> pluginBatchScanner;
 	@Autowired
-	private PluginService pluginService;
+	protected PluginService pluginService;
 	@Autowired
-	private PluginJarDelegate jarService;
-	private String propertiesFile;
-	private String adminPanelHtmlTemplate;
+	protected PluginJarDelegate jarService;
+	protected String propertiesFile;
+	protected String adminPanelHtmlTemplate;
 
 	Logger logger;
 
@@ -56,8 +56,9 @@ public abstract class PluginInstallService {
 	}
 
 	/**
+	 * Lists all plugins scanned but not registered in DB
 	 * 
-	 * @return
+	 * @return a list of plugins
 	 */
 	public List<PluginBatch> listNotYetInstalledPlugins() {
 		List<PluginBatch> result = new ArrayList<PluginBatch>();
@@ -182,6 +183,54 @@ public abstract class PluginInstallService {
 			throw new FileNotFoundException();
 		}
 
+	}
+
+	public ServiceLoader<PluginBatch> getPluginBatchScanner() {
+		return pluginBatchScanner;
+	}
+
+	public void setPluginBatchScanner(ServiceLoader<PluginBatch> pluginBatchScanner) {
+		this.pluginBatchScanner = pluginBatchScanner;
+	}
+
+	public PluginService getPluginService() {
+		return pluginService;
+	}
+
+	public void setPluginService(PluginService pluginService) {
+		this.pluginService = pluginService;
+	}
+
+	public PluginJarDelegate getJarService() {
+		return jarService;
+	}
+
+	public void setJarService(PluginJarDelegate jarService) {
+		this.jarService = jarService;
+	}
+
+	public String getPropertiesFile() {
+		return propertiesFile;
+	}
+
+	public void setPropertiesFile(String propertiesFile) {
+		this.propertiesFile = propertiesFile;
+	}
+
+	public String getAdminPanelHtmlTemplate() {
+		return adminPanelHtmlTemplate;
+	}
+
+	public void setAdminPanelHtmlTemplate(String adminPanelHtmlTemplate) {
+		this.adminPanelHtmlTemplate = adminPanelHtmlTemplate;
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
 
 }

@@ -3,7 +3,7 @@ package net.biologeek.bot.wiki.client;
 public enum Country {
 
 	
-	FR("fr"),EN("en");
+	FR("fr"),EN("en"), ALL(null);
 	
 	private String prefix;
 

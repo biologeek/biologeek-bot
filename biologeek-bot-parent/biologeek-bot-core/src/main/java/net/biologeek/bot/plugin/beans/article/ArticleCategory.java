@@ -3,16 +3,14 @@ package net.biologeek.bot.plugin.beans.article;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import org.springframework.data.annotation.Id;
 
 @Entity
 public class ArticleCategory {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long articleCateggoryId;
+	@Id@GeneratedValue(strategy = GenerationType.AUTO)
+	private long articleCategoryId;
 	private long articleId;
 	private long categoryId;
 	private String fullWikipediaTitle;
@@ -21,12 +19,12 @@ public class ArticleCategory {
 	@ManyToOne
 	private ArticleCategories articleCategories;
 
-	public long getArticleCateggoryId() {
-		return articleCateggoryId;
+	public long getArticleCategoryId() {
+		return articleCategoryId;
 	}
 
-	public void setArticleCateggoryId(long articleCateggoryId) {
-		this.articleCateggoryId = articleCateggoryId;
+	public void setArticleCategoryId(long articleCateggoryId) {
+		this.articleCategoryId = articleCateggoryId;
 	}
 
 	public long getArticleId() {
