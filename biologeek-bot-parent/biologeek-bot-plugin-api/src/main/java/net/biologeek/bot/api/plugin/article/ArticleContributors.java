@@ -4,6 +4,7 @@ import java.util.List;
 
 public class ArticleContributors extends Article<List<String>>{
 
+	
 	private List<String> value;
 
 	@Override

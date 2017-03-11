@@ -4,10 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
-import net.biologeek.bot.plugin.install.AbstractPluginInstaller;
+import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 
 /**
  * Represents an installed plugin, stored in database
@@ -27,6 +28,7 @@ public class PluginBean {
 	private PluginBatch batch;
 
 	@OneToOne
+	@JoinColumn(name="installer_id")
 	private AbstractPluginInstaller installer;
 
 	private String jarFile;

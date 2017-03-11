@@ -72,7 +72,7 @@ public class ApplicationConfig implements EnvironmentAware{
 	public EmbeddedServletContainerFactory tomcat() {
 		return new TomcatEmbeddedServletContainerFactory();
 	}
-
+/*
 	@Bean
 	public DataSource datasource() throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
@@ -85,7 +85,7 @@ public class ApplicationConfig implements EnvironmentAware{
 
 		return dataSource;
 	}
-
+*/
 	@Bean
 	JpaTransactionManager jpaTransactionManager(EntityManagerFactory factory) {
 		JpaTransactionManager manager = new JpaTransactionManager();
@@ -98,7 +98,7 @@ public class ApplicationConfig implements EnvironmentAware{
 		LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
 		emf.setDataSource(ds);
 		emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-		emf.setPackagesToScan("net.biologeek.bot.plugin.beans");
+		emf.setPackagesToScan("net.biologeek.bot.plugin");
 
 		emf.setJpaProperties(properties());
 		return emf;

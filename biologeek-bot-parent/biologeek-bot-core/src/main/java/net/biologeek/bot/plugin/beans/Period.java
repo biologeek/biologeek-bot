@@ -2,11 +2,14 @@ package net.biologeek.bot.plugin.beans;
 
 import java.util.Date;
 
+import javax.persistence.Embeddable;
+
 
 /**
  * Represents a period of time with a beginning and an end
  * 
  */
+@Embeddable
 public class Period {
 	
 	private Date beginning;

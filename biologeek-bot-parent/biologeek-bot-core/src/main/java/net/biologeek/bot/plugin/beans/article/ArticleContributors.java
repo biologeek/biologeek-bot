@@ -2,9 +2,13 @@ package net.biologeek.bot.plugin.beans.article;
 
 import java.util.List;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+
+@Entity
 public class ArticleContributors extends ArticleElement<List<String>> {
 
-	
+	@ElementCollection
 	private List<String> value;
 
 	@Override

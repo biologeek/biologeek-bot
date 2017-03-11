@@ -16,7 +16,7 @@ public class WikipediaApiService {
 	@Autowired
 	Wikipedia wikipedia;
 	@Autowired
-	private ArticleService<?> articleService;
+	private ArticleService<ArticleContent> articleContentService;
 
 	public WikipediaApiService() {
 
@@ -69,13 +69,5 @@ public class WikipediaApiService {
 
 	public void setWikipedia(Wikipedia wikipedia) {
 		this.wikipedia = wikipedia;
-	}
-
-	public ArticleService getArticleService() {
-		return articleService;
-	}
-
-	public void setArticleService(ArticleService articleService) {
-		this.articleService = articleService;
 	}
 }

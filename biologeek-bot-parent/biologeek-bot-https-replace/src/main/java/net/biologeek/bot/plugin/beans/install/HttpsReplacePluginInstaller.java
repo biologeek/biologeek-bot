@@ -1,16 +1,16 @@
-package net.biologeek.bot.install;
+package net.biologeek.bot.plugin.beans.install;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Date;
+
+import javax.persistence.Entity;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
-import net.biologeek.bot.plugin.install.AbstractPluginInstaller;
+import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.install.PluginInstaller;
 import net.biologeek.bot.plugin.services.PluginInstallService;
 
@@ -23,17 +23,11 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
  * before and after uninstalling. Also it sets properties file and admin page
  * template specific to batch
  */
+@Entity
 public class HttpsReplacePluginInstaller extends AbstractPluginInstaller {
 
 	@Autowired
 	PluginInstallService service;
-
-	@Value("plugin.batch.period.begin")
-	private Date batchPeriodBegin;
-	@Value("plugin.batch.period.end")
-	private Date batchPeriodEnd;
-
-	private Period batchPeriod;
 
 	public HttpsReplacePluginInstaller() {
 		super();

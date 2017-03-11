@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
+import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.UninstallException;
-import net.biologeek.bot.plugin.install.AbstractPluginInstaller;
 import sun.misc.URLClassPath;
 
 @Service
