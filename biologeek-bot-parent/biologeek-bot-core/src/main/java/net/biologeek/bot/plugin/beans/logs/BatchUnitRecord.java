@@ -11,6 +11,10 @@ import javax.persistence.ManyToOne;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 
 @Entity
+/**
+ *  A log of a batch launch. It records exit code, can serve for performance record, detecting an issue, ...
+ *
+ */
 public class BatchUnitRecord {
 
 	@Id@GeneratedValue

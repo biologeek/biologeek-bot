@@ -3,7 +3,6 @@ package net.biologeek.bot.api.plugin;
 
 /**
  * Represents an installed plugin, stored in database 
- * @author xavier
  */
 public class PluginBean {
 	
