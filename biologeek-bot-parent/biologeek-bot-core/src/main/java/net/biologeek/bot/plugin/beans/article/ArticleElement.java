@@ -26,10 +26,19 @@ public abstract class ArticleElement<T> {
 
 	@Id@GeneratedValue
 	protected long id;
+	protected long pageId;
 	protected String title;
 
 	public ArticleElement() {
 		super();
+	}
+
+	public long getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(long pageId) {
+		this.pageId = pageId;
 	}
 
 	public long getId() {

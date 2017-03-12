@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import net.biologeek.bot.plugin.beans.article.ArticleElement;
 
 @Repository
-public interface ArticleRepository<ArticleElement> extends JpaRepository<ArticleElement, Long>{
+public interface ArticleRepository<T extends ArticleElement<?>> extends JpaRepository<T, Long>{
 
 }

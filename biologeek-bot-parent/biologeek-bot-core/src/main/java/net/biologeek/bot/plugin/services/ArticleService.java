@@ -7,18 +7,18 @@ import net.biologeek.bot.plugin.beans.article.ArticleElement;
 import net.biologeek.bot.plugin.repositories.ArticleRepository;
 
 @Service
+@SuppressWarnings("rawtypes")
 public class ArticleService<T extends ArticleElement> {
-	
+
 	@Autowired
 	private ArticleRepository<T> repository;
-	 
-	
-	public T save (T arg0){
+
+	public T save(T arg0) {
 		return repository.save(arg0);
 	}
-	
-	public T getOne(Long id){
-		return repository.findOne(id);
+
+	public T getOne(Long id) {
+		return (T) repository.findOne(id);
 	}
 
 	public ArticleRepository<T> getRepository() {
@@ -29,5 +29,4 @@ public class ArticleService<T extends ArticleElement> {
 		this.repository = repository;
 	}
 
-	
 }

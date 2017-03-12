@@ -16,7 +16,7 @@ public class ArticleConverter {
 				.title(articleContent.getTitle())//
 				.value(articleContent.getValue());
 	}
-
+	
 	public static ArticleCategories convert(
 			net.biologeek.bot.api.plugin.article.ArticleCategories articleCategories) {
 		return new ArticleCategories().id(Integer.valueOf(articleCategories.getPageid()))//
@@ -38,7 +38,7 @@ public class ArticleConverter {
 		cat.setFullWikipediaTitle(val.getTitle());
 		cat.setReadableTitle(val.getTitle());
 		//TODO : Rajouter l'ID
-		return null;
+		return cat;
 	}
 
 	public static ArticleContributors convert(
