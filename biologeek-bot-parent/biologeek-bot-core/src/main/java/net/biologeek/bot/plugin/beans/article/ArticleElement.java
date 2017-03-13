@@ -22,7 +22,7 @@ import net.biologeek.bot.plugin.beans.Prop;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-public abstract class ArticleElement<T> {
+public class ArticleElement {
 
 	@Id@GeneratedValue
 	protected long id;
@@ -57,12 +57,8 @@ public abstract class ArticleElement<T> {
 		this.title = title;
 	}
 
-	public abstract T getValue();
-
-	public abstract void setValue(T value);
-
 	public static class ArticleFactory {
-		public static ArticleElement<?> getInstance(Prop type) {
+		public static ArticleElement getInstance(Prop type) {
 			switch (type) {
 			case CONTENT:
 				return new ArticleContent();
@@ -82,5 +78,4 @@ public abstract class ArticleElement<T> {
 			return null;
 		}
 	}
-
 }

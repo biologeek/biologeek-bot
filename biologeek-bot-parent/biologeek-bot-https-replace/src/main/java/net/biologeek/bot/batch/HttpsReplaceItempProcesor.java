@@ -38,25 +38,26 @@ public class HttpsReplaceItempProcesor implements ItemProcessor<ArticleContent, 
 	 * Replaces all occurences of http:// by https:// when it is available
 	 */
 	public ArticleContent process(ArticleContent arg0) {
-
 		Pattern pattern = Pattern.compile("<\\b(http|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]>");
-
 		Matcher matcher = pattern.matcher(arg0.getValue());
 		int count = 0;
 		while (matcher.find()) {
 			String address = matcher.group(count);
-
 			try {
+				// 1. Connect to page in HTTP
+				// 2. If OK connect in HTTPS
+				// 3. If OK ends, else throws exception
 				String newAddress = connectToPageAndCheckStatus(address);
 				replaceOldAddressWithNewAddressInArticle(arg0, address, newAddress);
 			} catch (HttpsConnectionException e) {
+				// If HTTPS fails, it does not support it 
 				logger.info("Https connection failed for " + address + ". Continuing...");
 				continue;
 			} catch (HttpConnectException e) {
-				logger.info("Http connection failed for " + address + ". Continuing...");
-				e.printStackTrace();
+				// If HTTP fails, do nothing
+				logger.info("HTTP : Could not connect to " + address + ". Continuing...");
+				continue;
 			}
-
 		}
 		return arg0;
 	}
@@ -96,7 +97,7 @@ public class HttpsReplaceItempProcesor implements ItemProcessor<ArticleContent, 
 			if (address.startsWith("https:")) {
 				address.replace("https:", "http:");
 			}
-			status = sendHttpOrHtppsRequest(address);
+			status = sendHttpOrHttpsRequest(address);
 		} catch (ConnectException e) {
 			throw new HttpConnectException(e.getMessage());
 		} catch (MalformedURLException e) {
@@ -107,7 +108,7 @@ public class HttpsReplaceItempProcesor implements ItemProcessor<ArticleContent, 
 		if (status >= 200 && status < 300) {
 			int httpsResult = 0;
 			try {
-				httpsResult = sendHttpOrHtppsRequest(address.replace("http:", "https:"));
+				httpsResult = sendHttpOrHttpsRequest(address.replace("http:", "https:"));
 			} catch (MalformedURLException | ConnectException e) {
 				e.printStackTrace();
 				throw new HttpsConnectionException(e.getMessage());
@@ -120,7 +121,7 @@ public class HttpsReplaceItempProcesor implements ItemProcessor<ArticleContent, 
 		return address;
 	}
 
-	private int sendHttpOrHtppsRequest(String address) throws MalformedURLException, ConnectException {
+	private int sendHttpOrHttpsRequest(String address) throws MalformedURLException, ConnectException {
 		URL url = new URL(address);
 		try {
 			if (address.startsWith("https")) {

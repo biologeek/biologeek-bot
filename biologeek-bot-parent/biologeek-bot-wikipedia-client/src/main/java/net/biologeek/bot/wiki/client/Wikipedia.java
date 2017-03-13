@@ -15,6 +15,8 @@ import net.biologeek.bot.api.plugin.login.Login.LoginStatus;
 import net.biologeek.bot.api.plugin.login.LoginResponseType;
 import net.biologeek.bot.api.plugin.login.Token;
 import net.biologeek.bot.api.plugin.login.User;
+import net.biologeek.bot.wiki.client.endpoints.ArticleEndpoints;
+import net.biologeek.bot.wiki.client.endpoints.CategoriesEndpoints;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
 import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
 import net.biologeek.bot.wiki.client.exceptions.WikiException;

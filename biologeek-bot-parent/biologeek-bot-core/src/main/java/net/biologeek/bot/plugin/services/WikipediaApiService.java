@@ -7,7 +7,7 @@ import net.biologeek.bot.plugin.beans.article.ArticleCategories;
 import net.biologeek.bot.plugin.beans.article.ArticleContent;
 import net.biologeek.bot.plugin.beans.article.ArticleContributors;
 import net.biologeek.bot.plugin.beans.article.ArticleElement;
-import net.biologeek.bot.plugin.converter.ArticleConverter;
+import net.biologeek.bot.plugin.converter.ArticleToModelConverter;
 import net.biologeek.bot.wiki.client.Wikipedia;
 import net.biologeek.bot.wiki.client.exceptions.WikiException;
 
@@ -22,8 +22,8 @@ public class WikipediaApiService {
 
 	}
 
-	public ArticleElement<?> getArticleElement(String articleTitle, Prop prop, String[] extraArgs) {
-		ArticleElement<?> article = null;
+	public ArticleElement getArticleElement(String articleTitle, Prop prop, String[] extraArgs) {
+		ArticleElement article = null;
 
 		try {
 			switch (prop) {
@@ -47,20 +47,20 @@ public class WikipediaApiService {
 	}
 
 	private ArticleContributors getArticleContributors(String articleTitle) {
-		return ArticleConverter.convert(wikipedia.getArticleContributors(articleTitle));
+		return ArticleToModelConverter.convert(wikipedia.getArticleContributors(articleTitle));
 	}
 
-	private ArticleElement<?> getArticleModificationHistory(String articleTitle) {
+	private ArticleElement getArticleModificationHistory(String articleTitle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	private ArticleCategories getArticleCategories(String articleTitle) throws WikiException {
-		return ArticleConverter.convert(wikipedia.getArticleCategories(articleTitle));
+		return ArticleToModelConverter.convert(wikipedia.getArticleCategories(articleTitle));
 	}
 
 	private ArticleContent getArticleContent(String articleTitle) throws WikiException {
-		return ArticleConverter.convert(wikipedia.getArticleContent(articleTitle));
+		return ArticleToModelConverter.convert(wikipedia.getArticleContent(articleTitle));
 	}
 
 	public Wikipedia getWikipedia() {

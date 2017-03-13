@@ -1,4 +1,4 @@
-package net.biologeek.bot.wiki.client;
+package net.biologeek.bot.wiki.client.endpoints;
 
 import net.biologeek.bot.api.plugin.category.CategoryMembers;
 import retrofit2.Call;

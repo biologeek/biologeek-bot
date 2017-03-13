@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 @Entity
-public class ArticleCategories extends ArticleElement<List<ArticleCategory>> {
+public class ArticleCategories extends ArticleElement implements Valuable<List<ArticleCategory>> {
 	
 	@OneToMany
 	private List<ArticleCategory> value;
@@ -16,7 +16,6 @@ public class ArticleCategories extends ArticleElement<List<ArticleCategory>> {
 		return value;
 	}
 
-	@Override
 	public void setValue(List<ArticleCategory> value) {
 		this.value = value;
 	}

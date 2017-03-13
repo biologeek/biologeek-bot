@@ -8,7 +8,7 @@ import net.biologeek.bot.plugin.beans.article.ArticleCategory;
 import net.biologeek.bot.plugin.beans.article.ArticleContent;
 import net.biologeek.bot.plugin.beans.article.ArticleContributors;
 
-public class ArticleConverter {
+public class ArticleToModelConverter {
 
 	public static ArticleContent convert(net.biologeek.bot.api.plugin.article.ArticleContent articleContent) {
 		return new ArticleContent()//

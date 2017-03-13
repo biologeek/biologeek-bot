@@ -3,7 +3,7 @@ package net.biologeek.bot.plugin.beans.article;
 import javax.persistence.Entity;
 
 @Entity
-public class ArticleContent extends ArticleElement<String> {
+public class ArticleContent extends ArticleElement implements Valuable<String> {
 
 	private String value;
 

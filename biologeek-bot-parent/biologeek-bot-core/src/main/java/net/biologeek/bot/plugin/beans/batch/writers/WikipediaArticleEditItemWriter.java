@@ -7,10 +7,10 @@ import org.springframework.batch.item.ItemWriter;
 import net.biologeek.bot.api.plugin.article.Article;
 import net.biologeek.bot.plugin.beans.article.ArticleContent;
 import net.biologeek.bot.plugin.beans.article.ArticleElement;
-import net.biologeek.bot.plugin.converter.ArticleConverter;
+import net.biologeek.bot.plugin.converter.ArticleToModelConverter;
 import net.biologeek.bot.plugin.converter.ArticleToApiConvertor;
 
-public class WikipediaArticleEditItemWriter<T extends ArticleElement<?>> implements ItemWriter<T> {
+public class WikipediaArticleEditItemWriter<T extends ArticleElement> implements ItemWriter<T> {
 
 	@Override
 	public void write(List<? extends T> arg0) throws Exception {
