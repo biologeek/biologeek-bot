@@ -7,6 +7,7 @@ import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.biologeek.bot.api.plugin.article.ArticleContent;
+import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 import net.biologeek.bot.plugin.services.WikipediaApiService;
 
 public class WikipediaArticleItemReader implements ItemReader<ArticleContent> {
@@ -14,11 +15,24 @@ public class WikipediaArticleItemReader implements ItemReader<ArticleContent> {
 	@Autowired
 	private WikipediaApiService wikipedia;
 	
+	private String categoryToScan;
+	
 	@Override
 	public ArticleContent read()
 			throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		// TODO
+		
+		CategoryMembers catMembers = wikipedia.getCategoryMembers(categoryToScan);
+		
 		return null;
 	}
+
+	public String getCategoryToScan() {
+		return categoryToScan;
+	}
+
+	public void setCategoryToScan(String categoryToScan) {
+		this.categoryToScan = categoryToScan;
+	}
+	
 
 }

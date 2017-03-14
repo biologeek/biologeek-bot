@@ -112,7 +112,7 @@ public class Wikipedia {
 	 * @throws APIException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public CategoryMembers getCategoryMembers(String title, String continueParam, boolean getAll) throws APIException {
+	public CategoryMembers getCategoryMembers(String title, String continueParam) throws APIException {
 		try {
 			if (!title.startsWith("Category:"))
 				title = Constants.CATEGORY_TITLE_PREFIX_EN + title;
