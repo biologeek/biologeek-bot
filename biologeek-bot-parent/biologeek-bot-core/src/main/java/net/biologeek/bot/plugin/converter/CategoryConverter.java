@@ -4,8 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.biologeek.bot.api.plugin.NS;
+import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMember;
 import net.biologeek.bot.plugin.beans.category.CategoryMember;
 import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 import net.biologeek.bot.plugin.beans.category.MediaType;
@@ -14,23 +16,27 @@ public class CategoryConverter {
 
 	public static CategoryMembers convert(net.biologeek.bot.api.plugin.category.CategoryMembers categoryMembers,
 			String categoryListOfPatterns) {
+		CategoryMembers result = new CategoryMembers();
 		/*
 		 * Returns a list of patterns parametered that identfy a wiki category.
 		 * Usually in english Wikipedia it's Category:Physics for example
 		 */
-		Predicate<net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember> predicate = getCategoryListOfPatterns(
+		Predicate<net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember> categoryPredicate = getCategoryListOfPatterns(
 				categoryListOfPatterns);
 
-		List<CategoryMember> articles = categoryMembers.getValue()//
+		Stream<CategoryMember> stream = categoryMembers.getValue()//
 				.stream()//
-				.filter(predicate)//
-				.map(t -> CategoryConverter.convert(t))//
-				.collect(Collectors.toList());
+				.filter(categoryPredicate.negate())//
+				.map(t -> CategoryConverter.convert(t));//
+		stream.forEach(t -> t.setParentCategory(result));
+		List<CategoryMember> articles = stream.collect(Collectors.toList());
 
-		List<CategoryMember> categories = categoryMembers.getValue()//
+		Stream<CategoryMember> stream1 = categoryMembers.getValue()//
 				.stream()//
-				.filter(predicate.negate())//
-				.map(CategoryConverter::convert).collect(Collectors.toList());
+				.filter(categoryPredicate)//
+				.map(CategoryConverter::convert);
+		stream1.forEach(t -> t.setParentCategory(result));
+		List<CategoryMember> categories = stream1.collect(Collectors.toList());
 
 		return new CategoryMembers()//
 				.articles(articles)//
@@ -39,6 +45,20 @@ public class CategoryConverter {
 				.categoryTitle(null);
 	}
 
+	/**
+	 * Returns predicate used to discriminate categories, medias, ... from
+	 * standard articles. <br>
+	 * <br>
+	 * Note that as you inject your own list of patterns, you can discriminate
+	 * whatever you want and even mix namespaces<br>
+	 * <br>
+	 * Unicode codes are converted to standard text <br>
+	 * <br>
+	 * Note : Should not be here but I don't know where to put it.
+	 * 
+	 * @param categoryListOfPatterns
+	 * @return
+	 */
 	private static Predicate<net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember> getCategoryListOfPatterns(
 			String categoryListOfPatterns) {
 		return new Predicate<net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember>() {
@@ -80,6 +100,14 @@ public class CategoryConverter {
 
 	private static MediaType convertMediaType(int ns) {
 		return MediaType.valueOf(NS.valueOf(ns).name());
+	}
+
+	public static SimpleCategoryMember convert(CategoryMembers categories) {
+		return (SimpleCategoryMember) new SimpleCategoryMember()//
+				.articles(categories.getArticles())//
+				.categories(categories.getCategories())//
+				.categoryId(categories.getCategoryId())
+				.categoryTitle(categories.getCategoryTitle());
 	}
 
 }

@@ -6,12 +6,22 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
 @Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+/**
+ * Consists of a Category object defined by its id and/or title and composed of
+ * sub articles and sub categories (for the moment)
+ * 
+ * It has a builder pattern !
+ */
 public class CategoryMembers {
 
-	@Id@GeneratedValue
+	@Id
+	@GeneratedValue
 	private Long id;
 	private String categoryId;
 	private String categoryTitle;
@@ -86,5 +96,5 @@ public class CategoryMembers {
 		this.setCategoryTitle(object);
 		return this;
 	}
-	
+
 }

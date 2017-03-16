@@ -6,6 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
+import org.hibernate.cfg.ExtendsQueueEntry;
+
 import net.biologeek.bot.plugin.beans.Prop;
 
 /**

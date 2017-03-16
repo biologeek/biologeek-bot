@@ -15,21 +15,20 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import net.biologeek.bot.api.plugin.article.ArticleContent;
+import net.biologeek.bot.plugin.beans.article.ArticleContent;
 import net.biologeek.bot.plugin.exceptions.HttpConnectException;
 import net.biologeek.bot.plugin.exceptions.HttpsConnectionException;
 import net.biologeek.bot.wiki.client.Wikipedia;
-import net.biologeek.bot.wiki.client.exceptions.WikiException;
 
 @Component
-public class HttpsReplaceItempProcesor implements ItemProcessor<ArticleContent, ArticleContent> {
+public class HttpsReplaceItemProcesor implements ItemProcessor<ArticleContent, ArticleContent> {
 
 	private Logger logger;
 
 	@Autowired
 	private Wikipedia wikipedia;
 
-	public HttpsReplaceItempProcesor() {
+	public HttpsReplaceItemProcesor() {
 		logger = Logger.getLogger(this.getClass().getName());
 	}
 

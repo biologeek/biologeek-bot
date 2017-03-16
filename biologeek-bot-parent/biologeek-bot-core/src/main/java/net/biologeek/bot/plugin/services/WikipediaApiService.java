@@ -60,20 +60,20 @@ public class WikipediaApiService {
 		return article;
 	}
 
-	private ArticleContributors getArticleContributors(String articleTitle) {
+	public ArticleContributors getArticleContributors(String articleTitle) {
 		return ArticleToModelConverter.convert(wikipedia.getArticleContributors(articleTitle));
 	}
 
-	private ArticleElement getArticleModificationHistory(String articleTitle) {
+	public ArticleElement getArticleModificationHistory(String articleTitle) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private ArticleCategories getArticleCategories(String articleTitle) throws WikiException {
+	public ArticleCategories getArticleCategories(String articleTitle) throws WikiException {
 		return ArticleToModelConverter.convert(wikipedia.getArticleCategories(articleTitle));
 	}
 
-	private ArticleContent getArticleContent(String articleTitle) throws WikiException {
+	public ArticleContent getArticleContent(String articleTitle) throws WikiException {
 		return ArticleToModelConverter.convert(wikipedia.getArticleContent(articleTitle));
 	}
 
@@ -85,8 +85,20 @@ public class WikipediaApiService {
 		this.wikipedia = wikipedia;
 	}
 
+	/**
+	 * Calls Wikipedia client to retrieve category members. <br>
+	 * Resulting business object separates article members and sub categories
+	 * 
+	 * @param categoryToScan
+	 *            the title of the category (if does not start with 'Category:'
+	 *            it is added)
+	 * @return a {@link CategoryMembers} object
+	 * @throws ServiceException
+	 */
 	public CategoryMembers getCategoryMembers(String categoryToScan) throws ServiceException {
 		CategoryMembers result = new CategoryMembers();
+
+		result.setCategoryTitle(categoryToScan);
 		net.biologeek.bot.api.plugin.category.CategoryMembers partialResult = new net.biologeek.bot.api.plugin.category.CategoryMembers();
 		do {
 			// First time cmContinue is null so it's ok
@@ -96,19 +108,12 @@ public class WikipediaApiService {
 				e.printStackTrace();
 				throw new ServiceException(e.getMessage());
 			}
-			result.getArticles().addAll(extractArticlesFromList(CategoryConverter.convert(partialResult, categoryListOfPatterns)));
-			result.getCategories().addAll(extractCategoriesFromList(CategoryConverter.convert(partialResult)));
+			CategoryMembers temp = CategoryConverter.convert(partialResult, categoryListOfPatterns);
+			result.getArticles().addAll(temp.getArticles());
+			result.getCategories().addAll(temp.getCategories());
+
 		} while (partialResult.getCmContinue() != null);
 
 		return result;
-	}
-
-	List<CategoryMember> extractCategoriesFromList(CategoryMembers partialResult) {
-			partialResult.getArticles();
-			return null;}
-
-	private List<CategoryMember> extractArticlesFromList(CategoryMembers partialResult) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
