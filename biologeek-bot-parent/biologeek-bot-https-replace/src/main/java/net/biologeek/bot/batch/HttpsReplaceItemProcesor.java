@@ -25,11 +25,19 @@ public class HttpsReplaceItemProcesor implements ItemProcessor<ArticleContent, A
 
 	private Logger logger;
 
+	private URL url;
+
 	@Autowired
 	private Wikipedia wikipedia;
 
 	public HttpsReplaceItemProcesor() {
 		logger = Logger.getLogger(this.getClass().getName());
+	}
+
+	public HttpsReplaceItemProcesor(URL url, Wikipedia wikipedia) {
+		logger = Logger.getLogger(this.getClass().getName());
+		this.url = url;
+		this.wikipedia = wikipedia;
 	}
 
 	@Override
@@ -49,7 +57,7 @@ public class HttpsReplaceItemProcesor implements ItemProcessor<ArticleContent, A
 				String newAddress = connectToPageAndCheckStatus(address);
 				replaceOldAddressWithNewAddressInArticle(arg0, address, newAddress);
 			} catch (HttpsConnectionException e) {
-				// If HTTPS fails, it does not support it 
+				// If HTTPS fails, it does not support it
 				logger.info("Https connection failed for " + address + ". Continuing...");
 				continue;
 			} catch (HttpConnectException e) {
@@ -121,9 +129,9 @@ public class HttpsReplaceItemProcesor implements ItemProcessor<ArticleContent, A
 	}
 
 	private int sendHttpOrHttpsRequest(String address) throws MalformedURLException, ConnectException {
-		URL url = new URL(address);
+		url = new URL(address);
 		try {
-			if (address.startsWith("https")) {
+			if (address.startsWith("https;")) {
 				return this.sendHttpsRequest(url);
 			} else if (address.startsWith("http:")) {
 				return this.sendHttpRequest(url);
@@ -185,6 +193,14 @@ public class HttpsReplaceItemProcesor implements ItemProcessor<ArticleContent, A
 
 	public void setWikipedia(Wikipedia wikipedia) {
 		this.wikipedia = wikipedia;
+	}
+
+	public URL getUrl() {
+		return url;
+	}
+
+	public void setUrl(URL url) {
+		this.url = url;
 	}
 
 }
