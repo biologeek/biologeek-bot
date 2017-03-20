@@ -14,7 +14,6 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.support.CompositeItemWriter;
-import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,12 +27,11 @@ import net.biologeek.bot.batch.HttpsReplaceItemProcesor;
 import net.biologeek.bot.batch.beans.PurgeSubCategoriesItemProcesor;
 import net.biologeek.bot.plugin.beans.article.ArticleContent;
 import net.biologeek.bot.plugin.beans.article.ArticleElement;
-import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMember;
+import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMembers;
 import net.biologeek.bot.plugin.beans.batch.readers.CategoryItemReader;
 import net.biologeek.bot.plugin.beans.batch.readers.WikipediaArticleItemReader;
 import net.biologeek.bot.plugin.beans.batch.writers.ArticleWitnessItemWriter;
 import net.biologeek.bot.plugin.beans.batch.writers.WikipediaArticleEditItemWriter;
-import net.biologeek.bot.plugin.beans.category.CategoryMember;
 import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 import net.biologeek.bot.plugin.config.ApplicationConfig;
 
@@ -69,7 +67,7 @@ public class HttpsReplaceConfig {
 	@Bean
 	Step retrieveArticleTitles(){
 		return steps.get("retrieveArticles")
-				.<CategoryMembers, SimpleCategoryMember> chunk(50)
+				.<CategoryMembers, SimpleCategoryMembers> chunk(50)
 				.reader(categoryReader())
 				.processor(categoryProcessor())
 				.writer(tempCategoryStorage())
@@ -80,8 +78,8 @@ public class HttpsReplaceConfig {
 	 * Writing to database
 	 * @return
 	 */
-	private ItemWriter<SimpleCategoryMember> tempCategoryStorage() {
-		JpaItemWriter<SimpleCategoryMember> writer = new JpaItemWriter<SimpleCategoryMember>();
+	private ItemWriter<SimpleCategoryMembers> tempCategoryStorage() {
+		JpaItemWriter<SimpleCategoryMembers> writer = new JpaItemWriter<>();
 		writer.setEntityManagerFactory(entityManagerFactory);
 		return writer;
 	}
@@ -91,7 +89,7 @@ public class HttpsReplaceConfig {
 	 * 
 	 * @return
 	 */
-	private ItemProcessor<CategoryMembers, SimpleCategoryMember> categoryProcessor() {
+	private ItemProcessor<CategoryMembers, SimpleCategoryMembers> categoryProcessor() {
 		return new PurgeSubCategoriesItemProcesor();
 	}
 

@@ -91,7 +91,7 @@ public class CategoryConverter {
 	}
 
 	public static CategoryMember convert(net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember members) {
-		return new CategoryMember().pageId(members.getPageid())//
+		return new CategoryMember().pageId(String.valueOf(members.getPageid()))//
 				.title(members.getTitle())//
 				.mediaType(convertMediaType(members.getNs()))//
 				.parentCategory(null)// FIXME
@@ -102,12 +102,8 @@ public class CategoryConverter {
 		return MediaType.valueOf(NS.valueOf(ns).name());
 	}
 
-	public static SimpleCategoryMember convert(CategoryMembers categories) {
-		return (SimpleCategoryMember) new SimpleCategoryMember()//
-				.articles(categories.getArticles())//
-				.categories(categories.getCategories())//
-				.categoryId(categories.getCategoryId())
-				.categoryTitle(categories.getCategoryTitle());
+	public static SimpleCategoryMember convert(CategoryMember categories) {
+		return new SimpleCategoryMember(categories);
 	}
 
 }

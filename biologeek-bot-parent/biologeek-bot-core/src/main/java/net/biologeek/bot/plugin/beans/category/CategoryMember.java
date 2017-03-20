@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMember;
+
 @Entity
 public class CategoryMember {
 
@@ -32,13 +34,13 @@ public class CategoryMember {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public CategoryMember pageId(int pageid2) {
-		// TODO Auto-generated method stub
-		return null;
+	public CategoryMember pageId(String pageid2) {
+		this.pageId = pageid2;
+		return this;
 	}
 	public CategoryMember title(String title2) {
-		// TODO Auto-generated method stub
-		return null;
+		this.title = title2;
+		return this;
 	}
 	public Long getId() {
 		return id;
@@ -59,11 +61,15 @@ public class CategoryMember {
 		this.parentCategory = parentCategory;
 	}
 	public CategoryMember mediaType(MediaType convertMediaType) {
-		// TODO Auto-generated method stub
-		return null;
+		this.mediaType = convertMediaType;
+		return this;
 	}
-	public CategoryMember parentCategory(String object) {
-		// TODO Auto-generated method stub
-		return null;
+	public CategoryMember parentCategory(CategoryMembers object) {
+		this.parentCategory = object;
+		return this;
+	}
+	public CategoryMember id(Long id2) {
+		this.id = id2;
+		return this;
 	}
 }

@@ -12,4 +12,13 @@ import net.biologeek.bot.plugin.beans.category.CategoryMember;
  */
 public class SimpleCategoryMember extends CategoryMember {
 
+	public SimpleCategoryMember(CategoryMember categories) {
+		super();
+		this.setId(categories.getId());
+		this.setMediaType(categories.getMediaType());
+		this.setPageId(categories.getPageId());
+		this.setParentCategory(categories.getParentCategory());
+		this.setTitle(categories.getTitle());
+	}
+
 }

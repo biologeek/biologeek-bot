@@ -3,19 +3,24 @@ package net.biologeek.bot.batch.beans;
 import org.springframework.batch.item.ItemProcessor;
 
 import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMember;
+import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMembers;
+import net.biologeek.bot.plugin.beans.category.CategoryMember;
 import net.biologeek.bot.plugin.beans.category.CategoryMembers;
-import net.biologeek.bot.plugin.converter.CategoryConverter;
 
 /**
- * Convenient ItemProcessor for purging sub categories and only treating articles
- * Converts to {@link SimpleCategoryMember}
+ * Convenient ItemProcessor for purging sub categories and only treating
+ * articles Converts to {@link SimpleCategoryMember}
  *
  */
-public class PurgeSubCategoriesItemProcesor implements ItemProcessor<CategoryMembers, SimpleCategoryMember>{
+public class PurgeSubCategoriesItemProcesor implements ItemProcessor<CategoryMembers, SimpleCategoryMembers> {
 
 	@Override
-	public SimpleCategoryMember process(CategoryMembers arg0) throws Exception {
-		return CategoryConverter.convert(arg0.categories(null));
+	public SimpleCategoryMembers process(CategoryMembers arg0) throws Exception {
+		SimpleCategoryMembers result = new SimpleCategoryMembers();
+		for (CategoryMember member : arg0.getArticles()) {
+			result.getMembers().add(new SimpleCategoryMember(member));
+		}
+		return result;
 	}
 
 }
