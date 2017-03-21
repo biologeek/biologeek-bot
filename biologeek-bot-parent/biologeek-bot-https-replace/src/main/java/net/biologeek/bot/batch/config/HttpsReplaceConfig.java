@@ -36,8 +36,8 @@ import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 import net.biologeek.bot.plugin.config.ApplicationConfig;
 
 @Configuration
-@PropertySources({ @PropertySource("classpath:src/main/resources/application.properties"),
-		@PropertySource("classpath:src/main/resources/bdd.properties") })
+@PropertySources({ @PropertySource("classpath:application.properties"),
+		@PropertySource("classpath:bdd.properties") })
 @Import(value = ApplicationConfig.class)
 @EnableBatchProcessing
 public class HttpsReplaceConfig {
@@ -47,7 +47,7 @@ public class HttpsReplaceConfig {
 
 	@Autowired
 	StepBuilderFactory steps;
-	
+
 	@Value("${job.scan.category.name}")
 	private String categoryToScan;
 
@@ -61,21 +61,43 @@ public class HttpsReplaceConfig {
 
 	@Bean
 	Job httpsConversionJob() {
-		return jobs.get("httpsConversionJob").start(httpsConvertStep()).build();
-	}
-	
-	@Bean
-	Step retrieveArticleTitles(){
-		return steps.get("retrieveArticles")
-				.<CategoryMembers, SimpleCategoryMembers> chunk(50)
-				.reader(categoryReader())
-				.processor(categoryProcessor())
-				.writer(tempCategoryStorage())
+		return jobs.get("httpsConversionJob")//
+				.flow(retrieveArticleTitles())//
+				.next(httpsConvertStep())//
+				.end()//
 				.build();
+	}
+
+	@Bean
+	/**
+	 * First step that retrieves the articles titles
+	 * @return
+	 */
+	Step retrieveArticleTitles() {
+		return steps.get("retrieveArticles")//
+				.<CategoryMembers, SimpleCategoryMembers>chunk(50)//
+				.reader(categoryReader())//
+				.processor(categoryProcessor())//
+				.writer(tempCategoryStorage())//
+				.build();
+	}
+
+	@Bean
+	/**
+	 * Second step, the one that converts http to https
+	 * @return
+	 */
+	Step httpsConvertStep() {
+		return steps.get("httpsConvertStep")//
+				.<ArticleContent, ArticleContent> chunk(10)//
+				.reader(articleReader())//
+				.processor(itemProcesor())//
+				.writer(articleCompositeItemWriter()).build();
 	}
 
 	/**
 	 * Writing to database
+	 * 
 	 * @return
 	 */
 	private ItemWriter<SimpleCategoryMembers> tempCategoryStorage() {
@@ -99,16 +121,7 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean
-	Step httpsConvertStep() {
-		return steps.get("httpsConvertStep")//
-				.<ArticleContent, ArticleContent> chunk(10)//
-				.reader(articleReader())//
-				.processor(itemProcesor())//
-				.writer(articleCompositeItemWriter()).build();
-	}
-
-	@Bean
-	private ItemReader<ArticleContent> articleReader() {
+	ItemReader<ArticleContent> articleReader() {
 		return new WikipediaArticleItemReader();
 	}
 
@@ -125,12 +138,12 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean(name = "articleWitnessItemWriter")
-	private ItemWriter<ArticleElement> articleWitnessItemWriter() {
+	ItemWriter<ArticleElement> articleWitnessItemWriter() {
 		return new ArticleWitnessItemWriter();
 	}
 
 	@Bean(name = "wikipediaArticleEditItemWriter")
-	private ItemWriter<ArticleElement> wikipediaArticleEditItemWriter() {
+	ItemWriter<ArticleElement> wikipediaArticleEditItemWriter() {
 		return new WikipediaArticleEditItemWriter<>();
 	}
 

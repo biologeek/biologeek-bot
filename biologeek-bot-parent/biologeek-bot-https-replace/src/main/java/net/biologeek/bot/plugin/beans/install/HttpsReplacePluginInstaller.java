@@ -23,22 +23,7 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
  * before and after uninstalling. Also it sets properties file and admin page
  * template specific to batch
  */
-@Entity
-public class HttpsReplacePluginInstaller extends AbstractPluginInstaller {
-
-	@Autowired
-	PluginInstallService service;
-
-	public HttpsReplacePluginInstaller() {
-		super();
-		this.batchPeriod = new Period(batchPeriodBegin, batchPeriodEnd);
-
-	}
-
-	public HttpsReplacePluginInstaller(PluginBean bean) {
-		super(bean);
-		this.batchPeriod = new Period(batchPeriodBegin, batchPeriodEnd);
-	}
+public class HttpsReplacePluginInstaller implements PluginInstaller {
 
 	@Override
 	public void afterSaveBatch() {
@@ -56,7 +41,8 @@ public class HttpsReplacePluginInstaller extends AbstractPluginInstaller {
 		bean.setDescription("A plugin that replaces http links to https links");
 		bean.setName("HttpsReplaceBatch");
 		if (bean.getBatch() != null) {
-			bean.getBatch().setBatchPeriod(batchPeriod);
+			bean.getBatch().setBatchPeriod(
+					new Period(bean.getInstaller().getBatchPeriodBegin(), bean.getInstaller().getBatchPeriodEnd()));
 		}
 		return bean;
 	}
@@ -68,23 +54,15 @@ public class HttpsReplacePluginInstaller extends AbstractPluginInstaller {
 
 	@Override
 	public void setAdminPanelHtmlTemplate(String tpl) {
-		this.service.setAdminPanelHtmlTemplate(tpl);
+		this.setAdminPanelHtmlTemplate(tpl);
 	}
 
 	@Override
 	public void setPropertiesFile(String tpl) throws FileNotFoundException {
 		if (new File(tpl).exists()) {
-			this.service.setPropertiesFile(tpl);
+			this.setPropertiesFile(tpl);
 			return;
 		}
 		throw new FileNotFoundException();
-	}
-
-	public PluginInstallService getService() {
-		return service;
-	}
-
-	public void setService(PluginInstallService service) {
-		this.service = service;
 	}
 }

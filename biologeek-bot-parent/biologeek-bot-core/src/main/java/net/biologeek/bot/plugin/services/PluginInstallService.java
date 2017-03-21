@@ -20,6 +20,7 @@ import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.UninstallException;
+import net.biologeek.bot.plugin.install.PluginInstaller;
 import sun.misc.URLClassPath;
 
 @Service
@@ -95,20 +96,20 @@ public abstract class PluginInstallService {
 	 * @throws InstallException
 	 */
 	public PluginBean install(PluginBean bean) throws InstallException {
-
 		logger.info("Starting batch install");
-
 		jarService.addJarToClasspath(new File(bean.getJarFile()));
-		AbstractPluginInstaller installer = bean.getInstaller();
-
+		PluginInstaller installer = null;
+		try {
+			installer = (PluginInstaller) Class.forName(bean.getInstaller().getInstallerService()).newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			logger.severe("Error duriong Installer service instantiation !");
+			e.printStackTrace();
+		}
 		logger.info("Before save batch");
 		bean = installer.beforeSaveBatch(bean);
-
 		pluginService.save(bean);
-
 		logger.info("After save batch");
 		installer.afterSaveBatch();
-
 		return bean;
 	}
 
@@ -126,7 +127,6 @@ public abstract class PluginInstallService {
 				throw new InstallException(e.getMessage());
 			}
 		}
-
 		return install(bean);
 	}
 

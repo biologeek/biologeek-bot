@@ -17,7 +17,13 @@ import net.biologeek.bot.plugin.install.PluginInstaller;
 
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractPluginInstaller implements PluginInstaller {
+/**
+ * The POJO class that represents a persisted installer configuration. Most attributres might be constants or @Value.
+ * 
+ * Does not do any business action
+ *
+ */
+public abstract class AbstractPluginInstaller {
 	
 	@Id@GeneratedValue
 	private Long id;
@@ -29,8 +35,9 @@ public abstract class AbstractPluginInstaller implements PluginInstaller {
 	protected Date batchPeriodBegin;
 	@Value("plugin.batch.period.end")
 	protected Date batchPeriodEnd;
-
-	protected Period batchPeriod;
+	
+	@Value("plugin.installer.service")
+	String installerService;
 
 	public AbstractPluginInstaller(PluginBean bean2) {
 		this.bean = bean2;
@@ -64,12 +71,20 @@ public abstract class AbstractPluginInstaller implements PluginInstaller {
 		this.batchPeriodEnd = batchPeriodEnd;
 	}
 
-	public Period getBatchPeriod() {
-		return batchPeriod;
+	public Long getId() {
+		return id;
 	}
 
-	public void setBatchPeriod(Period batchPeriod) {
-		this.batchPeriod = batchPeriod;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getInstallerService() {
+		return installerService;
+	}
+
+	public void setInstallerService(String installerService) {
+		this.installerService = installerService;
 	}
 	
 	
