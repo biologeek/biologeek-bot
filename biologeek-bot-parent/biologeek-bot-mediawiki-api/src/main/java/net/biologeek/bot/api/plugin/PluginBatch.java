@@ -1,14 +1,12 @@
 package net.biologeek.bot.api.plugin;
 
-import java.time.Period;
+import java.io.Serializable;
 
+import net.biologeek.bot.api.plugin.Period;
+import net.biologeek.bot.api.plugin.exceptions.Errorable;
 
-public abstract class PluginBatch {
+public class PluginBatch implements Errorable, Serializable{
 
-	/**
-	 * Batch Plugin object
-	 */
-	private PluginBean plugin;
 	/**
 	 * Batch concrete class
 	 */
@@ -21,20 +19,6 @@ public abstract class PluginBatch {
 	 * Time frequency is expressed in min-1
 	 */
 	private double timeFrequency;
-
-	public abstract void execute(String[] params);
-
-	public PluginBean getPlugin() {
-		return plugin;
-	}
-
-	public void setPlugin(PluginBean plugin) {
-		this.plugin = plugin;
-	}
-
-	public void getClassName(String className) {
-		this.className = className;
-	}
 
 	public String getClassName() {
 		return className;
@@ -59,4 +43,20 @@ public abstract class PluginBatch {
 	public void setTimeFrequency(double timeFrequency) {
 		this.timeFrequency = timeFrequency;
 	}
+
+	public PluginBatch timeFrequency(double timeFrequency) {
+		this.timeFrequency = timeFrequency;
+		return this;
+	}
+
+	public PluginBatch batchPeriod(Period batchPeriod) {
+		this.batchPeriod = batchPeriod;
+		return this;
+	}
+
+	public PluginBatch className(String className) {
+		this.className = className;
+		return this;
+	}
+
 }

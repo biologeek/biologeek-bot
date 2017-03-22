@@ -11,6 +11,7 @@
 		<module>biologeek-bot-plugin-api</module>
 		<module>biologeek-bot-wikipedia-client</module>
 		<module>biologeek-webapp</module>
+		<module>biologeek-bot-mediawiki-api</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -23,7 +23,6 @@ public class PluginBean {
 	private long pluginId;
 	private String name;
 	private String description;
-	@SuppressWarnings("rawtypes")
 	@OneToOne(fetch = FetchType.EAGER)
 	private PluginBatch batch;
 
@@ -32,15 +31,12 @@ public class PluginBean {
 	private AbstractPluginInstaller installer;
 
 	private String jarFile;
-	private Class<? extends AbstractPluginInstaller> installerClass;
-	private Class<?> pluginClass;
 
-	@SuppressWarnings("rawtypes")
 	public PluginBatch getBatch() {
 		return batch;
 	}
 
-	public void setBatch(@SuppressWarnings("rawtypes") PluginBatch batch) {
+	public void setBatch(PluginBatch batch) {
 		this.batch = batch;
 	}
 
@@ -58,14 +54,6 @@ public class PluginBean {
 
 	public void setInstaller(AbstractPluginInstaller installer) {
 		this.installer = installer;
-	}
-
-	public Class<? extends AbstractPluginInstaller> getInstallerClass() {
-		return installerClass;
-	}
-
-	public void setInstallerClass(Class<? extends AbstractPluginInstaller> installerClass) {
-		this.installerClass = installerClass;
 	}
 
 	public String getDescription() {
@@ -91,13 +79,4 @@ public class PluginBean {
 	public void setPluginId(long pluginId) {
 		this.pluginId = pluginId;
 	}
-
-	public Class<?> getPluginClass() {
-		return pluginClass;
-	}
-
-	public void setPluginClass(Class<?> pluginClass) {
-		this.pluginClass = pluginClass;
-	}
-
 }

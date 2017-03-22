@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.biologeek.bot.api.plugin.serialization.CategoryContentQueryType;
-import net.biologeek.bot.api.plugin.serialization.Errorable;
 
 /**
  * 
@@ -18,7 +17,7 @@ import net.biologeek.bot.api.plugin.serialization.Errorable;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Category<T> implements Errorable {
+public abstract class Category<T> {
 
 	@JsonProperty("batchcomplete")
 	private String batchcomplete;

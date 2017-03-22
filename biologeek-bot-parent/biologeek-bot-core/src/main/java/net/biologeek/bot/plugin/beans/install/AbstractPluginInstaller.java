@@ -31,13 +31,12 @@ public abstract class AbstractPluginInstaller {
 	@OneToOne(mappedBy="installer")
 	protected PluginBean bean;
 
-	@Value("plugin.batch.period.begin")
 	protected Date batchPeriodBegin;
-	@Value("plugin.batch.period.end")
 	protected Date batchPeriodEnd;
 	
-	@Value("plugin.installer.service")
-	String installerService;
+	private String installerService;
+	
+	private String jarPath;
 
 	public AbstractPluginInstaller(PluginBean bean2) {
 		this.bean = bean2;
@@ -86,6 +85,12 @@ public abstract class AbstractPluginInstaller {
 	public void setInstallerService(String installerService) {
 		this.installerService = installerService;
 	}
-	
-	
+
+	public String getJarPath() {
+		return jarPath;
+	}
+
+	public void setJarPath(String jarPath) {
+		this.jarPath = jarPath;
+	}
 }
