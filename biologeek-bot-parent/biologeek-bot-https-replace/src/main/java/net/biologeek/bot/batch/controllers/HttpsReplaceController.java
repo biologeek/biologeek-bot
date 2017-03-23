@@ -1,7 +1,5 @@
 package net.biologeek.bot.batch.controllers;
 
-import java.io.Serializable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.biologeek.bot.api.plugin.ExceptionWrapper;
 import net.biologeek.bot.api.plugin.PluginBean;
-import net.biologeek.bot.api.plugin.serialization.Errorable;
+import net.biologeek.bot.api.plugin.exceptions.Errorable;
+import net.biologeek.bot.api.plugin.exceptions.ExceptionWrapper;
 import net.biologeek.bot.plugin.converter.ExceptionToApiConverter;
 import net.biologeek.bot.plugin.converter.PluginToApiConverter;
 import net.biologeek.bot.plugin.converter.PluginToModelConverter;

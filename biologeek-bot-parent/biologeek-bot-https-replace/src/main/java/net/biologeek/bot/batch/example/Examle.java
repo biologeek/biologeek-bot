@@ -1,7 +1,11 @@
 package net.biologeek.bot.batch.example;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -21,19 +25,24 @@ public class Examle {
 		System.out.println("getDefaultPort : " + url.getDefaultPort());
 
 		try {
-			Blabla b = new Examle.Blabla(); 
+			Blabla b = new Examle.Blabla();
 		} catch (APIException e) {
-			System.out.println(
-					Arrays.asList(e.getStackTrace())//
+			System.out.println(Arrays.asList(e.getStackTrace())//
 					.stream()//
 					.map(t -> t.toString())//
 					.collect(Collectors.joining("\n")));
 		}
+		
+		
+		
+		Path path = Paths.get(URI.create("file://C:/Utilisateurs/xcaron"));
+		
+		System.out.println(path.getFileName());
+		System.out.println(path.toAbsolutePath().toString());
 	}
 
-	
 	public static class Blabla {
-		Blabla () throws APIException {
+		Blabla() throws APIException {
 			try {
 				throw new Exception();
 			} catch (Exception e) {

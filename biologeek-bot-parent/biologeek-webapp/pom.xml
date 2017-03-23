@@ -23,5 +23,10 @@
 			<artifactId>biologeek-bot-mediawiki-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>net.biologeek</groupId>
+			<artifactId>biologeek-bot-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

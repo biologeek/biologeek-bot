@@ -3,7 +3,7 @@ package net.biologeek.bot.plugin.converter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import net.biologeek.bot.api.plugin.ExceptionWrapper;
+import net.biologeek.bot.api.plugin.exceptions.ExceptionWrapper;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 
 public class ExceptionToApiConverter {

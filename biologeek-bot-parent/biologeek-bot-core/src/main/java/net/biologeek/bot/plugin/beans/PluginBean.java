@@ -31,6 +31,11 @@ public class PluginBean {
 	private AbstractPluginInstaller installer;
 
 	private String jarFile;
+	
+	/**
+	 * Is the bean ready for being installed, run, ...
+	 */
+	private Boolean isComplete;
 
 	public PluginBatch getBatch() {
 		return batch;
@@ -78,5 +83,13 @@ public class PluginBean {
 
 	public void setPluginId(long pluginId) {
 		this.pluginId = pluginId;
+	}
+
+	public Boolean getIsComplete() {
+		return isComplete;
+	}
+
+	public void setIsComplete(Boolean isComplete) {
+		this.isComplete = isComplete;
 	}
 }

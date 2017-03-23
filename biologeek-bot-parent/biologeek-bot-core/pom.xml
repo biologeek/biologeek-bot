@@ -42,6 +42,11 @@
 		</dependency>
 		<dependency>
 			<groupId>net.biologeek</groupId>
+			<artifactId>biologeek-bot-mediawiki-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.biologeek</groupId>
 			<artifactId>biologeek-bot-wikipedia-client</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -64,6 +69,12 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
 
 
 		<!-- JPA Provider (Hibernate) -->

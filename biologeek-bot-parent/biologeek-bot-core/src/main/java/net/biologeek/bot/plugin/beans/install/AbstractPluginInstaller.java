@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
-import net.biologeek.bot.plugin.install.PluginInstaller;
+import net.biologeek.bot.plugin.install.PluginInstallerService;
 
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)

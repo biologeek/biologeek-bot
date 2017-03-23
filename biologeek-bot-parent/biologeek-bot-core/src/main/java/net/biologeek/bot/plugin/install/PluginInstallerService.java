@@ -7,7 +7,7 @@ import net.biologeek.bot.plugin.beans.PluginBean;
 /**
  * Defines install (and uninstall) behaviour of a plugin
  */
-public interface PluginInstaller {
+public interface PluginInstallerService {
 	
 
 	

@@ -17,7 +17,7 @@ public class PluginBean implements Errorable, Serializable{
 	private boolean isInstalled;
 	
 	private PluginBatch batch;
-	private PluginInstaller installer;
+	private PluginInstallerService installer;
 	
 	public String getDescription() {
 		return description;
@@ -50,10 +50,10 @@ public class PluginBean implements Errorable, Serializable{
 	public void setBatch(PluginBatch batch) {
 		this.batch = batch;
 	}
-	public PluginInstaller getInstaller() {
+	public PluginInstallerService getInstaller() {
 		return installer;
 	}
-	public void setInstaller(PluginInstaller installer) {
+	public void setInstaller(PluginInstallerService installer) {
 		this.installer = installer;
 	}
 
@@ -75,7 +75,7 @@ public class PluginBean implements Errorable, Serializable{
 		this.isInstalled = isInstalled;
 		return this;
 	}
-	public PluginBean installer(PluginInstaller installer) {
+	public PluginBean installer(PluginInstallerService installer) {
 		this.installer = installer;
 		return this;
 	}

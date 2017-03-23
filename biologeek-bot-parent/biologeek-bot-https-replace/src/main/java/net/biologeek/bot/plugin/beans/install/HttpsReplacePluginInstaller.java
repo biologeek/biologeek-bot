@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
-import net.biologeek.bot.plugin.install.PluginInstaller;
+import net.biologeek.bot.plugin.install.PluginInstallerService;
 import net.biologeek.bot.plugin.services.PluginInstallService;
 
 /**
- * {@link HttpsReplacePluginInstaller} implements {@link PluginInstaller}
+ * {@link HttpsReplacePluginInstaller} implements {@link PluginInstallerService}
  * defined behaviors for install These implementations are used when installer
  * is get and called during plugin install.
  * 
@@ -23,7 +23,7 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
  * before and after uninstalling. Also it sets properties file and admin page
  * template specific to batch
  */
-public class HttpsReplacePluginInstaller implements PluginInstaller {
+public class HttpsReplacePluginInstaller implements PluginInstallerService {
 
 	@Override
 	public void afterSaveBatch() {
