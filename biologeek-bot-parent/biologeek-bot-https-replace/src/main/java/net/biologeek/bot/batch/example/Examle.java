@@ -1,19 +1,36 @@
 package net.biologeek.bot.batch.example;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+
+import javassist.bytecode.ClassFile;
+import javassist.tools.reflect.Reflection;
+import net.biologeek.bot.plugin.beans.PluginBean;
+import net.biologeek.bot.plugin.exceptions.ServiceException;
+import net.biologeek.bot.plugin.install.PluginInstallerService;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
 
 public class Examle {
 
-	public static void main(String[] args) throws MalformedURLException {
+	public static void main(String[] args) throws ClassNotFoundException, FileNotFoundException, IOException {
 
 		URL url = new URL("https://fr.wikipedia.org/wiki/Hypno5e");
 
@@ -32,13 +49,35 @@ public class Examle {
 					.map(t -> t.toString())//
 					.collect(Collectors.joining("\n")));
 		}
-		
-		
-		
+
 		Path path = Paths.get(URI.create("file://C:/Utilisateurs/xcaron"));
-		
+
 		System.out.println(path.getFileName());
 		System.out.println(path.toAbsolutePath().toString());
+
+		File file = new File(
+				"D:/Profiles/xcaron/git/biologeek-bot/biologeek-bot-parent/biologeek-bot-https-replace/target/biologeek-bot-https-replace-0.0.1-SNAPSHOT.jar");
+
+		if (file.exists()) {
+			URL uri = file.toURI().toURL();
+			JarInputStream jis = new JarInputStream(new FileInputStream(file));
+
+			JarEntry entry = null;
+
+			URLClassLoader loader = null;
+
+			while ((entry = jis.getNextJarEntry()) != null) {
+				if (entry.isDirectory()){
+				}
+				if (entry.getName().endsWith(".class")) {
+					ClassFile classFile = new ClassFile(new DataInputStream(jis));
+
+					System.out.println(classFile.getName());
+				}
+
+			}
+
+		}
 	}
 
 	public static class Blabla {

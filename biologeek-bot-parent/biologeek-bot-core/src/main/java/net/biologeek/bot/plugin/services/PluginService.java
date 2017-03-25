@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import net.biologeek.bot.plugin.beans.Jar;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
+import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.ServiceException;
 import net.biologeek.bot.plugin.repositories.PluginRepository;
@@ -47,6 +48,13 @@ public class PluginService {
 		return pluginDao.findByName(name);
 	}
 
+	/**
+	 * Returns all registered plugins
+	 * @return all registered plugins
+	 */
+	public List<PluginBean> getInstalledPlugins(){
+		return pluginDao.findAll();
+	}
 	public PluginBean save(PluginBean bean) {
 		logger.info("Starting batch install");
 		return pluginDao.save(bean);
@@ -95,7 +103,7 @@ public class PluginService {
 	}
 
 	/**
-	 * return and builds all plugins present in a directory
+	 * Builds and returns all plugins present in a directory
 	 * 
 	 * @return
 	 * @throws ServiceException
@@ -108,15 +116,7 @@ public class PluginService {
 
 			for (Jar jar : jars) {
 				PluginBean pluginToAdd = new PluginBean();
-
-				/*
-				 * TODO FIXME Determine the way to build a PluginBean, must it
-				 * be done in core or for every plugin ? - Every plugin
-				 * 
-				 * Parameters stored in PluginBean : in properties, with an
-				 * extended bean ?
-				 */
-				pluginToAdd.setBatch((PluginBatch) jarDelegate.scanJarFileForImplementation(jar, PluginBatch.class));
+				buildBean(jar, pluginToAdd);
 			}
 		} catch (IOException | ClassNotFoundException | InstallException e) {
 			e.printStackTrace();
@@ -124,5 +124,34 @@ public class PluginService {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Builds a PluginBean by scanning jar for implementations of {@link PluginBatch} and {@link AbstractPluginInstaller}.
+	 * Also, sets jar file path and temporary plugin name.
+	 * 
+	 * @param jar
+	 * @param pluginToAdd plugin to build
+	 * @throws ClassNotFoundException in case no implementation of given abstract class is found
+	 * @throws InstallException if can't add Jar to classpath
+	 */
+	private void buildBean(Jar jar, PluginBean pluginToAdd) throws ClassNotFoundException, InstallException {
+		pluginToAdd.setBatch((PluginBatch) jarDelegate.scanJarFileForImplementation(jar, PluginBatch.class));
+		pluginToAdd.setInstaller((AbstractPluginInstaller) jarDelegate.scanJarFileForImplementation(jar, AbstractPluginInstaller.class));
+		pluginToAdd.setJarFile(jar.getAbsolutePath());
+		pluginToAdd.setName(((PluginBean) jarDelegate.scanJarFileForImplementation(jar, PluginBean.class))
+				.getClass().getSimpleName());
+	}
+
+	/**
+	 * Returns all plugins, merging installed and not installed ones
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<PluginBean> getAllPlugins() throws ServiceException {
+		List<PluginBean> beans = new ArrayList<>();
+		beans.addAll(this.getNotInstalledPlugins());
+		beans.addAll(this.getInstalledPlugins());
+		return beans;
 	}
 }
