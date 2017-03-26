@@ -6,7 +6,7 @@ import java.util.List;
 import net.biologeek.bot.api.plugin.Period;
 import net.biologeek.bot.api.plugin.PluginBatch;
 import net.biologeek.bot.api.plugin.PluginBean;
-import net.biologeek.bot.api.plugin.PluginInstallerService;
+import net.biologeek.bot.api.plugin.PluginInstaller;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 
 public class PluginToApiConverter {
@@ -32,8 +32,8 @@ public class PluginToApiConverter {
 		return new Period(batchPeriod.getBeginning(), batchPeriod.getEnd());
 	}
 
-	private static PluginInstallerService convert(AbstractPluginInstaller installer) {
-		return new PluginInstallerService()//
+	private static PluginInstaller convert(AbstractPluginInstaller installer) {
+		return new PluginInstaller()//
 				.batchPeriodBegin(installer.getBatchPeriodBegin())//
 				.id(installer.getId())//
 				.installerServiceClass(installer.getInstallerService())//

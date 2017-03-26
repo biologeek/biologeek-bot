@@ -5,7 +5,7 @@ import java.util.Date;
 
 import net.biologeek.bot.api.plugin.exceptions.Errorable;
 
-public class PluginInstallerService implements Errorable, Serializable{
+public class PluginInstaller implements Errorable, Serializable{
 
 	private Long id;
 	protected Date batchPeriodBegin;
@@ -44,22 +44,22 @@ public class PluginInstallerService implements Errorable, Serializable{
 		this.id = id;
 	}
 
-	public PluginInstallerService id(Long id) {
+	public PluginInstaller id(Long id) {
 		this.id = id;
 		return this;
 	}
 
-	public PluginInstallerService installerServiceClass(String installerServiceClass) {
+	public PluginInstaller installerServiceClass(String installerServiceClass) {
 		this.installerServiceClass = installerServiceClass;
 		return this;
 	}
 
-	public PluginInstallerService batchPeriodBegin(Date batchPeriodBegin) {
+	public PluginInstaller batchPeriodBegin(Date batchPeriodBegin) {
 		this.batchPeriodBegin = batchPeriodBegin;
 		return this;
 	}
 
-	public PluginInstallerService batchPeriodEnd(Date batchPeriodEnd) {
+	public PluginInstaller batchPeriodEnd(Date batchPeriodEnd) {
 		this.batchPeriodEnd = batchPeriodEnd;
 		return this;
 	}

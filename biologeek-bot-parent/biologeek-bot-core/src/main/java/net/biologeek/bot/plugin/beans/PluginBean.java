@@ -32,11 +32,6 @@ public class PluginBean {
 
 	private String jarFile;
 	
-	/**
-	 * Is the bean ready for being installed, run, ...
-	 */
-	private Boolean isComplete;
-
 	public PluginBatch getBatch() {
 		return batch;
 	}
@@ -85,11 +80,33 @@ public class PluginBean {
 		this.pluginId = pluginId;
 	}
 
-	public Boolean getIsComplete() {
-		return isComplete;
+	
+	// BUILDER
+	
+	public PluginBean description(String descriptions) {
+		this.description = descriptions;
+		return this;
+	}
+	public PluginBean name(String name) {
+		this.name = name;
+		return this;
+	}
+	public PluginBean pluginId(long pluginId) {
+		this.pluginId = pluginId;
+		return this;
+	}
+	public PluginBean installer(AbstractPluginInstaller installer) {
+		this.installer = installer;
+		return this;
 	}
 
-	public void setIsComplete(Boolean isComplete) {
-		this.isComplete = isComplete;
+	public PluginBean batch(PluginBatch batch) {
+		this.batch = batch;
+		return this;
+	}
+
+	public PluginBean jarFile(String batch) {
+		this.jarFile = batch;
+		return this;
 	}
 }

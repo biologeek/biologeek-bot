@@ -5,19 +5,24 @@ import java.io.Serializable;
 import net.biologeek.bot.api.plugin.exceptions.Errorable;
 
 /**
- * Represents an installed plugin
+ * Represents a plugin. When update, id must be not null, else it must be null
  * 
  */
 public class PluginBean implements Errorable, Serializable{
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7336931735921439960L;
 	private long pluginId;
 	private String name;
 	private String description;
 	private boolean isInstalled;
 	
 	private PluginBatch batch;
-	private PluginInstallerService installer;
+	private PluginInstaller installer;
+	
 	
 	public String getDescription() {
 		return description;
@@ -50,10 +55,10 @@ public class PluginBean implements Errorable, Serializable{
 	public void setBatch(PluginBatch batch) {
 		this.batch = batch;
 	}
-	public PluginInstallerService getInstaller() {
+	public PluginInstaller getInstaller() {
 		return installer;
 	}
-	public void setInstaller(PluginInstallerService installer) {
+	public void setInstaller(PluginInstaller installer) {
 		this.installer = installer;
 	}
 
@@ -75,7 +80,7 @@ public class PluginBean implements Errorable, Serializable{
 		this.isInstalled = isInstalled;
 		return this;
 	}
-	public PluginBean installer(PluginInstallerService installer) {
+	public PluginBean installer(PluginInstaller installer) {
 		this.installer = installer;
 		return this;
 	}

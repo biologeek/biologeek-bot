@@ -119,9 +119,10 @@ public abstract class PluginInstallService {
 		if (new File(jarFile).exists()) {
 			bean.setJarFile(jarFile);
 			try {
-				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class, true));
+				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class));
 				bean.setInstaller((AbstractPluginInstaller) jarService.scanJarFileForImplementation(jarFile,
-						AbstractPluginInstaller.class, false));
+						AbstractPluginInstaller.class));
+				//TODO
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				throw new InstallException(e.getMessage());
