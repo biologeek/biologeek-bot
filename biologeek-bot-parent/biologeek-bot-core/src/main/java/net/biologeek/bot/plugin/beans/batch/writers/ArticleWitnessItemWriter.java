@@ -11,7 +11,7 @@ public class ArticleWitnessItemWriter implements ItemWriter<ArticleElement> {
 
 	@Override
 	public void write(List<? extends ArticleElement> arg0) throws Exception {
-		// TODO Auto-generated method stub
+		// TODO Add writer implementation
 		
 	}
 

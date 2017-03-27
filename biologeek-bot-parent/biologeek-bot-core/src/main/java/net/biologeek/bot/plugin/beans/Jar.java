@@ -6,7 +6,6 @@ public class Jar extends File {
 
 	public Jar(String pathname) {
 		super(pathname);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

@@ -8,7 +8,7 @@ import net.biologeek.bot.plugin.exceptions.InstallException;
 
 public class ExceptionToApiConverter {
 
-	public static ExceptionWrapper convert(InstallException e) {
+	public static ExceptionWrapper convert(Exception e) {
 		ExceptionWrapper wrapper = new ExceptionWrapper()//
 				.errorClassName(e.getClass().getName())//
 				.humanReadableError(e.getMessage())//

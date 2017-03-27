@@ -24,93 +24,88 @@ import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
  * @param <T>
  */
 @Entity
-public class SpringBatchPluginBatch<T> extends PluginBatch {
+public class SpringBatchPluginBatch extends PluginBatch {
 
 	/**
 	 * Spring Batch Reader
 	 */
-	protected ItemReader<T> reader;
-	protected ItemWriter<T> writer;
-	protected ItemProcessor<T, T> procesor;
-	protected Job job;
-	protected LinkedList<Step> steps;
+	protected String reader;
+	protected String writer;
+	protected String procesor;
+	protected String job;
+	protected String steps;
 
-	public ItemReader<T> getReader() {
+	public String getReader() {
 		return reader;
 	}
 
-	public void setReader(ItemReader<T> reader) {
+	public void setReader(String reader) {
 		this.reader = reader;
 	}
 
-	public ItemWriter<T> getWriter() {
+	public String getWriter() {
 		return writer;
 	}
 
-	public void setWriter(ItemWriter<T> writer) {
+	public void setWriter(String writer) {
 		this.writer = writer;
 	}
 
-	public ItemProcessor<T, T> getProcesor() {
+	public String getProcesor() {
 		return procesor;
 	}
 
-	public void setProcesor(ItemProcessor<T, T> procesor) {
+	public void setProcesor(String procesor) {
 		this.procesor = procesor;
 	}
 
-	public Job getJob() {
+	public String getJob() {
 		return job;
 	}
 
-	public void setJob(Job job) {
+	public void setJob(String job) {
 		this.job = job;
 	}
 
-	public LinkedList<Step> getSteps() {
+	public String getSteps() {
 		return steps;
 	}
 
-	public void setSteps(LinkedList<Step> steps) {
+	public void setSteps(String steps) {
 		this.steps = steps;
 	}
 
-	public SpringBatchPluginBatch<T> batchPeriod(Period batchPeriod) {
-		this.batchPeriod = batchPeriod;
+	public SpringBatchPluginBatch batchPeriod(Period period) {
+		this.batchPeriod = period;
 		return this;
 	}
 
-	public SpringBatchPluginBatch<T> lastLaunchTime(Date batchPeriod) {
-		this.lastLaunchTime = batchPeriod;
+	public SpringBatchPluginBatch lastLaunchTime(Date lastLaunchTime) {
+		this.lastLaunchTime = lastLaunchTime;
 		return this;
 	}
 
-	public SpringBatchPluginBatch<T> job(Job job) {
-		this.job = job;
+	public SpringBatchPluginBatch job(String job2) {
+		this.job = job2;
 		return this;
 	}
 
-	public SpringBatchPluginBatch<T> reader(ItemReader reader2) {
-		this.reader = reader2;
+	public SpringBatchPluginBatch reader(String reader) {
+		this.reader = reader;
 		return this;
 	}
 
-	public SpringBatchPluginBatch<T> writer(ItemWriter reader2) {
-		this.writer = reader2;
+	public SpringBatchPluginBatch procesor(String procesor) {
+		this.procesor = procesor;
 		return this;
 	}
 
-	public SpringBatchPluginBatch<T> procesor(ItemProcessor reader2) {
-		this.procesor = reader2;
+	public SpringBatchPluginBatch writer(String writer) {
+		this.writer = writer;
 		return this;
 	}
 
-	public SpringBatchPluginBatch<T> steps(LinkedList<Step> list) {
-		this.steps = list;
-		return this;
-	}
-
-	public SpringBatchPluginBatch<T> logs(List<BatchUnitRecord> logs) {
+	public SpringBatchPluginBatch logs(List<BatchUnitRecord> logs) {
 		this.logs = logs;
 		return this;
 	}

@@ -11,9 +11,9 @@ import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 
 /**
- * Represents an installed plugin, stored in database
+ * Represents an installed plugin, stored in database. When installed, should
+ * have an ID while when not installed, ID should be null.
  * 
- * @author xavier
  */
 @Entity
 public class PluginBean {
@@ -27,11 +27,11 @@ public class PluginBean {
 	private PluginBatch batch;
 
 	@OneToOne
-	@JoinColumn(name="installer_id")
+	@JoinColumn(name = "installer_id")
 	private AbstractPluginInstaller installer;
 
 	private String jarFile;
-	
+
 	public PluginBatch getBatch() {
 		return batch;
 	}
@@ -80,21 +80,23 @@ public class PluginBean {
 		this.pluginId = pluginId;
 	}
 
-	
 	// BUILDER
-	
+
 	public PluginBean description(String descriptions) {
 		this.description = descriptions;
 		return this;
 	}
+
 	public PluginBean name(String name) {
 		this.name = name;
 		return this;
 	}
+
 	public PluginBean pluginId(long pluginId) {
 		this.pluginId = pluginId;
 		return this;
 	}
+
 	public PluginBean installer(AbstractPluginInstaller installer) {
 		this.installer = installer;
 		return this;

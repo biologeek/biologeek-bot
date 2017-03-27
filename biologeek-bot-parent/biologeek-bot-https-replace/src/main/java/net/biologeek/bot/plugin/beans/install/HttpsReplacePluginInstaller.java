@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
-import net.biologeek.bot.plugin.install.PluginInstallerService;
+import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
 import net.biologeek.bot.plugin.services.PluginInstallService;
 
 /**
- * {@link HttpsReplacePluginInstaller} implements {@link PluginInstallerService}
+ * {@link HttpsReplacePluginInstaller} implements {@link PluginSpecificInstallerDelegate}
  * defined behaviors for install These implementations are used when installer
  * is get and called during plugin install.
  * 
@@ -23,7 +23,10 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
  * before and after uninstalling. Also it sets properties file and admin page
  * template specific to batch
  */
-public class HttpsReplacePluginInstaller implements PluginInstallerService {
+public class HttpsReplacePluginInstaller implements PluginSpecificInstallerDelegate {
+
+	private String adminPanelHtmlTemplate;
+	private String propertiesFile;
 
 	@Override
 	public void afterSaveBatch() {
@@ -54,15 +57,25 @@ public class HttpsReplacePluginInstaller implements PluginInstallerService {
 
 	@Override
 	public void setAdminPanelHtmlTemplate(String tpl) {
-		this.setAdminPanelHtmlTemplate(tpl);
+		this.adminPanelHtmlTemplate = tpl;
 	}
 
 	@Override
 	public void setPropertiesFile(String tpl) throws FileNotFoundException {
 		if (new File(tpl).exists()) {
-			this.setPropertiesFile(tpl);
+			this.propertiesFile = tpl;
 			return;
 		}
 		throw new FileNotFoundException();
+	}
+
+	@Override
+	public String getAdminPanelHtmlTemplate() {
+		return this.adminPanelHtmlTemplate;
+	}
+
+	@Override
+	public String getPropertiesFile() {
+		return this.propertiesFile;
 	}
 }

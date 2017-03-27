@@ -13,20 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
-import net.biologeek.bot.plugin.install.PluginInstallerService;
-
-@Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
 /**
  * The POJO class that represents a persisted installer configuration. Most attributres might be constants or @Value.
  * 
- * Does not do any business action
+ * Should not do any business action. It's just a bean.
  *
  */
+@Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class AbstractPluginInstaller {
 	
 	@Id@GeneratedValue
-	private Long id;
+	protected Long id;
 	
 	@OneToOne(mappedBy="installer")
 	protected PluginBean bean;
@@ -34,9 +33,12 @@ public abstract class AbstractPluginInstaller {
 	protected Date batchPeriodBegin;
 	protected Date batchPeriodEnd;
 	
-	private String installerService;
+	/**
+	 * Specifics installer. Must be implementing {@link PluginSpecificInstallerDelegate} interface
+	 */
+	protected String installerService;
 	
-	private String jarPath;
+	protected String jarPath;
 
 	public AbstractPluginInstaller(PluginBean bean2) {
 		this.bean = bean2;

@@ -56,7 +56,6 @@ public abstract class PluginBatch implements Batch {
 
 	public PluginBatch() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 

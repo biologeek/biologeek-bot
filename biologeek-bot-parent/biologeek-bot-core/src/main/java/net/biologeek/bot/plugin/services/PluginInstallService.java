@@ -20,9 +20,20 @@ import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.UninstallException;
-import net.biologeek.bot.plugin.install.PluginInstallerService;
+import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
 import sun.misc.URLClassPath;
 
+/**
+ * An abstract service that can be implemented in various ways. A default
+ * implementation for Spring Batch based batches is provided in
+ * {@link SpringBatchPluginBatch}. <br>
+ * <br>
+ * This service handles installation of a plugin based on the type of batch. It
+ * can be based on a set of interface, to define a set of jobs, steps, ...<br>
+ * <br>
+ * Should not be mixed up with {@link PluginSpecificInstallerDelegate}.
+ *
+ */
 @Service
 public abstract class PluginInstallService {
 
@@ -33,6 +44,7 @@ public abstract class PluginInstallService {
 	protected PluginJarDelegate jarService;
 	protected String propertiesFile;
 	protected String adminPanelHtmlTemplate;
+	PluginSpecificInstallerDelegate installer;
 
 	Logger logger;
 
@@ -82,11 +94,23 @@ public abstract class PluginInstallService {
 			return pluginService.save(bean);
 	}
 
+
+	/**
+	 * 
+	 * @param convert
+	 * @return
+	 */
+	public PluginBean configure(PluginBean convert) throws InstallException {
+		return null;
+	}
+
+	
 	/**
 	 * Installs a plugin by saving the {@link PluginBean} and
 	 * {@link PluginBatch} objects.
 	 * 
-	 * Passed PluginBean object must be correctly filled.
+	 * Passed PluginBean object must be correctly filled. Install specifics
+	 * (bean.installer) can be injected or passed through argument bean
 	 * 
 	 * Calls {@link PluginInstallService#beforeSaveBatch()} prior to any action
 	 * Then plugin is saved and afterSaveBatch method is called
@@ -98,12 +122,15 @@ public abstract class PluginInstallService {
 	public PluginBean install(PluginBean bean) throws InstallException {
 		logger.info("Starting batch install");
 		jarService.addJarToClasspath(new File(bean.getJarFile()));
-		PluginInstallerService installer = null;
-		try {
-			installer = (PluginInstallerService) Class.forName(bean.getInstaller().getInstallerService()).newInstance();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			logger.severe("Error duriong Installer service instantiation !");
-			e.printStackTrace();
+		if (installer == null) {
+			try {
+				Object tempInstance = Class.forName(bean.getInstaller().getInstallerService()).newInstance();
+				if (tempInstance instanceof PluginSpecificInstallerDelegate)
+					installer = (PluginSpecificInstallerDelegate) tempInstance;
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				logger.severe("Error duriong Installer service instantiation !");
+				e.printStackTrace();
+			}
 		}
 		logger.info("Before save batch");
 		bean = installer.beforeSaveBatch(bean);
@@ -113,6 +140,15 @@ public abstract class PluginInstallService {
 		return bean;
 	}
 
+	/**
+	 * Builds a {@link PluginBean} object with data and classes found in jarFile
+	 * and installs the newly built plugin
+	 * 
+	 * @param jarFile
+	 *            the absolute path of jar plugin to install
+	 * @return
+	 * @throws InstallException
+	 */
 	public PluginBean install(String jarFile) throws InstallException {
 
 		PluginBean bean = new PluginBean();
@@ -122,7 +158,7 @@ public abstract class PluginInstallService {
 				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class));
 				bean.setInstaller((AbstractPluginInstaller) jarService.scanJarFileForImplementation(jarFile,
 						AbstractPluginInstaller.class));
-				//TODO
+				// TODO
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				throw new InstallException(e.getMessage());
@@ -234,4 +270,11 @@ public abstract class PluginInstallService {
 		this.logger = logger;
 	}
 
+	public PluginSpecificInstallerDelegate getInstaller() {
+		return installer;
+	}
+
+	public void setInstaller(PluginSpecificInstallerDelegate installer) {
+		this.installer = installer;
+	}
 }

@@ -25,7 +25,7 @@ import javassist.bytecode.ClassFile;
 import javassist.tools.reflect.Reflection;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.exceptions.ServiceException;
-import net.biologeek.bot.plugin.install.PluginInstallerService;
+import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
 
 public class Examle {

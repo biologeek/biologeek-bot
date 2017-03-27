@@ -8,7 +8,7 @@ public class HttpsReplaceBatchBean extends PluginBean {
 	public HttpsReplaceBatchBean() {
 		this.setDescription("Bot that replaces all links to their https equivalent if it is accessible");
 		this.setName("HttpsReplaceBot");
-		this.setBatch(new SpringBatchPluginBatch<>());
+		this.setBatch(new SpringBatchPluginBatch());
 		//TODO
 	}
 }

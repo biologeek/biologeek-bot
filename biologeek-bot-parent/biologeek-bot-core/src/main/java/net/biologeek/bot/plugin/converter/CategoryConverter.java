@@ -11,6 +11,7 @@ import net.biologeek.bot.plugin.beans.batch.SimpleCategoryMember;
 import net.biologeek.bot.plugin.beans.category.CategoryMember;
 import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 import net.biologeek.bot.plugin.beans.category.MediaType;
+import net.biologeek.bot.plugin.exceptions.ConversionException;
 
 public class CategoryConverter {
 
@@ -69,7 +70,6 @@ public class CategoryConverter {
 				try {
 					title = convertToUTF8(t.getTitle());
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

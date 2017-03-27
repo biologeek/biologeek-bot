@@ -6,25 +6,39 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.biologeek.bot.api.plugin.PluginBean;
+import net.biologeek.bot.api.plugin.exceptions.Errorable;
+import net.biologeek.bot.api.plugin.exceptions.ExceptionWrapper;
+import net.biologeek.bot.plugin.converter.ExceptionToApiConverter;
 import net.biologeek.bot.plugin.converter.PluginToApiConverter;
+import net.biologeek.bot.plugin.converter.PluginToModelConverter;
+import net.biologeek.bot.plugin.exceptions.ConversionException;
+import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.ServiceException;
-import net.biologeek.bot.plugin.install.PluginInstallerService;
+import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
+import net.biologeek.bot.plugin.services.PluginInstallService;
 import net.biologeek.bot.plugin.services.PluginService;
 
 @RestController
 
 /**
- * This controller manages plugin related actions : - list plugins, - ...
+ * This controller manages plugin related actions : <br>
+ * <br>
+ * - list plugins, - install a plugin, - configure and parameter plugin, - ...
  *
  */
-public class PluginManagementController {
+public class PluginManagementController implements DefaultPluginActions {
 
 	@Autowired
-	PluginInstallerService installerService;
+	PluginSpecificInstallerDelegate installerService;
+
+	@Autowired
+	PluginInstallService installService;
 
 	@Autowired
 	PluginService pluginService;
@@ -53,4 +67,51 @@ public class PluginManagementController {
 		return new ResponseEntity<List<PluginBean>>(result, HttpStatus.OK);
 	}
 
+	/**
+	 * Installs the plugin. For any batch, installation address must be mapped
+	 * as such : <b>/pluginName/install</b>
+	 * 
+	 * @param bean
+	 *            the bean to install
+	 * @return
+	 */
+	@RequestMapping(value = "/install", method = RequestMethod.POST)
+	public ResponseEntity<? extends Errorable> installBatch(@RequestBody PluginBean bean) {
+		ResponseEntity<? extends Errorable> response = null;
+		try {
+			response = new ResponseEntity<PluginBean>(
+					PluginToApiConverter.convert(installService.install(PluginToModelConverter.convert(bean))),
+					HttpStatus.OK);
+		} catch (InstallException | ConversionException e) {
+			response = new ResponseEntity<ExceptionWrapper>(ExceptionToApiConverter.convert(e),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return response;
+	}
+
+	@Override
+	@RequestMapping(value = "/configure", method = RequestMethod.POST)
+	public ResponseEntity<? extends Errorable> configureBatch(PluginBean bean) {
+		ResponseEntity<? extends Errorable> response = null;
+		try {
+			response = new ResponseEntity<PluginBean>(
+					PluginToApiConverter.convert(installService.configure(PluginToModelConverter.convert(bean))),
+					HttpStatus.OK);
+		} catch (InstallException | ConversionException e) {
+			response = new ResponseEntity<ExceptionWrapper>(ExceptionToApiConverter.convert(e),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return response;
+	}
+
+	@Override
+	@RequestMapping(value = "/configure/{id}", method = RequestMethod.GET)
+	public ResponseEntity<? extends Errorable> configureBatch(Long id) {
+		ResponseEntity<? extends Errorable> response = null;
+		response = new ResponseEntity<PluginBean>(PluginToApiConverter.convert(pluginService.getPluginById(id)),
+				HttpStatus.OK);
+		return response;
+	}
 }

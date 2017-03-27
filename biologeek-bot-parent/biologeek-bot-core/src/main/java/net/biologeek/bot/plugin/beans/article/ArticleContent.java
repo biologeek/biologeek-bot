@@ -9,7 +9,6 @@ public class ArticleContent extends ArticleElement implements Valuable<String> {
 
 	@Override
 	public String getValue() {
-		// TODO Auto-generated method stub
 		return value;
 	}
 
