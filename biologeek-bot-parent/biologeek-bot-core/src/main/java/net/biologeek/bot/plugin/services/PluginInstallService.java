@@ -11,10 +11,15 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Stack;
 import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 
+import javax.validation.ValidationException;
+
+import org.hibernate.validator.cfg.defs.NullDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.biologeek.bot.plugin.beans.Jar;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
@@ -31,11 +36,13 @@ import sun.misc.URLClassPath;
  * This service handles installation of a plugin based on the type of batch. It
  * can be based on a set of interface, to define a set of jobs, steps, ...<br>
  * <br>
- * Should not be mixed up with {@link PluginSpecificInstallerDelegate}.
+ * Should not be mixed up with {@link PluginSpecificInstallerDelegate} which
+ * handles specific actions to perform for each batch.
+ * 
  *
  */
 @Service
-public abstract class PluginInstallService {
+public abstract class PluginInstallService implements Mergeable<AbstractPluginInstaller>{
 
 	protected ServiceLoader<PluginBatch> pluginBatchScanner;
 	@Autowired
@@ -44,9 +51,11 @@ public abstract class PluginInstallService {
 	protected PluginJarDelegate jarService;
 	protected String propertiesFile;
 	protected String adminPanelHtmlTemplate;
+	@Autowired
 	PluginSpecificInstallerDelegate installer;
 
 	Logger logger;
+	private BatchService batchService;
 
 	public PluginInstallService() {
 		pluginBatchScanner = ServiceLoader.load(PluginBatch.class);
@@ -94,17 +103,48 @@ public abstract class PluginInstallService {
 			return pluginService.save(bean);
 	}
 
-
 	/**
+	 * Configures a plugin and its components
 	 * 
-	 * @param convert
+	 * @param updated
 	 * @return
+	 * @throws Exception
 	 */
-	public PluginBean configure(PluginBean convert) throws InstallException {
-		return null;
+	public PluginBean configure(PluginBean updated) {
+		PluginBean base = null;
+
+		if (updated.getPluginId() > 0) {
+			base = pluginService.getPluginById(updated.getPluginId());
+
+			base = pluginService.merge(base, updated);
+		}
+		return base;
 	}
 
-	
+	/**
+	 * Updates installer part of the plugin. Implement here validation of data
+	 * 
+	 * @param base
+	 * @param updated
+	 * @return
+	 */
+	@Override
+	public AbstractPluginInstaller merge(AbstractPluginInstaller base, AbstractPluginInstaller updated) throws ValidationException {
+		base.setBatchPeriod(updated.getBatchPeriod());
+		base.setInstallerService(updated.getInstallerService());
+		base.setJarPath(validateJar(updated.getJarPath()));
+		return base;
+	}
+
+	private String validateJar(String jarPath) {
+		Jar jar = new Jar(jarPath);
+
+		if (jar.exists() && jar.isFile() && jar.isJar())
+			return jarPath;
+		else
+			throw new ValidationException();
+	}
+
 	/**
 	 * Installs a plugin by saving the {@link PluginBean} and
 	 * {@link PluginBatch} objects.
@@ -142,23 +182,29 @@ public abstract class PluginInstallService {
 
 	/**
 	 * Builds a {@link PluginBean} object with data and classes found in jarFile
-	 * and installs the newly built plugin
+	 * and installs the newly built plugin.
 	 * 
-	 * @param jarFile
+	 * Description cannot be filled for the moment and title is set to provided
+	 * Jar file name
+	 * 
+	 * @param jarFilePath
 	 *            the absolute path of jar plugin to install
 	 * @return
 	 * @throws InstallException
 	 */
-	public PluginBean install(String jarFile) throws InstallException {
+	public PluginBean install(String jarFilePath) throws InstallException {
 
 		PluginBean bean = new PluginBean();
-		if (new File(jarFile).exists()) {
-			bean.setJarFile(jarFile);
+		Jar jarFile = new Jar(jarFilePath);
+		if (jarFile.exists() && !jarFile.isDirectory() && jarFile.getName().endsWith("jar")) {
+			bean.setJarFile(jarFilePath);
 			try {
 				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class));
 				bean.setInstaller((AbstractPluginInstaller) jarService.scanJarFileForImplementation(jarFile,
 						AbstractPluginInstaller.class));
-				// TODO
+				bean.setDescription(null);
+				bean.setName(jarFile.getName());
+				this.install(bean);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				throw new InstallException(e.getMessage());
@@ -211,8 +257,8 @@ public abstract class PluginInstallService {
 					((Stack) urlsField.get(ucp)).remove(url);
 				} catch (MalformedURLException | NoSuchFieldException | SecurityException | IllegalArgumentException
 						| IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					throw new UninstallException(e.getMessage());
 				}
 
 			}

@@ -3,6 +3,8 @@ package net.biologeek.bot.batch.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +100,7 @@ public class PluginManagementController implements DefaultPluginActions {
 			response = new ResponseEntity<PluginBean>(
 					PluginToApiConverter.convert(installService.configure(PluginToModelConverter.convert(bean))),
 					HttpStatus.OK);
-		} catch (InstallException | ConversionException e) {
+		} catch (ValidationException | ConversionException e) {
 			response = new ResponseEntity<ExceptionWrapper>(ExceptionToApiConverter.convert(e),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.validation.ValidationException;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -20,12 +22,13 @@ import net.biologeek.bot.plugin.beans.Jar;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
+import net.biologeek.bot.plugin.exceptions.BatchException;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.ServiceException;
 import net.biologeek.bot.plugin.repositories.PluginRepository;
 
 @Service
-public class PluginService {
+public class PluginService implements Mergeable<PluginBean>{
 
 	@Autowired
 	private PluginRepository pluginDao;
@@ -34,6 +37,12 @@ public class PluginService {
 	private PluginJarDelegate jarDelegate;
 
 	private Logger logger;
+
+	@Autowired
+	private Mergeable<PluginBatch> batchService;
+
+	@Autowired
+	private Mergeable<AbstractPluginInstaller> installerMergeable;
 
 	public PluginService() {
 		super();
@@ -65,14 +74,15 @@ public class PluginService {
 	}
 
 	/**
-	 * Lauches an instance of
+	 * Lauches an instance of a Spring Batch Job
 	 * 
 	 * @param launcher
 	 * @param job
 	 * @param arguments
+	 * @throws BatchException 
 	 */
 	public void launchSpringBatchJob(Class<? extends JobLauncher> launcher, Class<? extends Job> job,
-			JobParameters arguments) {
+			JobParameters arguments) throws BatchException {
 		Job jobInstance = null;
 		JobLauncher launcherInstance = null;
 		JobExecution execution;
@@ -84,21 +94,10 @@ public class PluginService {
 			launcherInstance = launcher.newInstance();
 			jobInstance = job.newInstance();
 			execution = launcherInstance.run(jobInstance, arguments);
-		} catch (InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
+		} catch (InstantiationException | IllegalAccessException | JobParametersInvalidException
+				| JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException e) {
 			e.printStackTrace();
-		} catch (JobExecutionAlreadyRunningException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JobRestartException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JobInstanceAlreadyCompleteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JobParametersInvalidException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BatchException(e.getMessage());
 		}
 	}
 
@@ -153,5 +152,33 @@ public class PluginService {
 		beans.addAll(this.getNotInstalledPlugins());
 		beans.addAll(this.getInstalledPlugins());
 		return beans;
+	}
+	
+	
+	/**
+	 * Merges old and new Plugin
+	 * 
+	 * @param base
+	 *            the plugin as stored in DB
+	 * @param updated
+	 *            freh new update not saved yet
+	 * @return
+	 */
+	public PluginBean merge(PluginBean base, PluginBean updated) throws ValidationException {
+
+		if (base.getPluginId() != updated.getPluginId()) {
+			throw new IllegalArgumentException("Source : " + base.getPluginId() + ", new : " + updated.getPluginId());
+		}
+
+		if (base.getBatch() == null) {
+			throw new NullPointerException("Batch null");
+		}
+
+		updated.name(base.getName())//
+				.description(updated.getDescription())//
+				.batch(batchService.merge(base.getBatch(), updated.getBatch()))//
+				.installer(installerMergeable.merge(base.getInstaller(), updated.getInstaller()));
+
+		return base;
 	}
 }

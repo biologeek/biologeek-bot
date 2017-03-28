@@ -29,9 +29,11 @@ public abstract class AbstractPluginInstaller {
 	
 	@OneToOne(mappedBy="installer")
 	protected PluginBean bean;
-
-	protected Date batchPeriodBegin;
-	protected Date batchPeriodEnd;
+	
+	/**
+	 * The period during which job can be launched
+	 */
+	protected Period batchPeriod;
 	
 	/**
 	 * Specifics installer. Must be implementing {@link PluginSpecificInstallerDelegate} interface
@@ -39,6 +41,14 @@ public abstract class AbstractPluginInstaller {
 	protected String installerService;
 	
 	protected String jarPath;
+
+	public Period getBatchPeriod() {
+		return batchPeriod;
+	}
+
+	public void setBatchPeriod(Period batchPeriod) {
+		this.batchPeriod = batchPeriod;
+	}
 
 	public AbstractPluginInstaller(PluginBean bean2) {
 		this.bean = bean2;
@@ -54,22 +64,6 @@ public abstract class AbstractPluginInstaller {
 
 	public void setBean(PluginBean bean) {
 		this.bean = bean;
-	}
-
-	public Date getBatchPeriodBegin() {
-		return batchPeriodBegin;
-	}
-
-	public void setBatchPeriodBegin(Date batchPeriodBegin) {
-		this.batchPeriodBegin = batchPeriodBegin;
-	}
-
-	public Date getBatchPeriodEnd() {
-		return batchPeriodEnd;
-	}
-
-	public void setBatchPeriodEnd(Date batchPeriodEnd) {
-		this.batchPeriodEnd = batchPeriodEnd;
 	}
 
 	public Long getId() {
