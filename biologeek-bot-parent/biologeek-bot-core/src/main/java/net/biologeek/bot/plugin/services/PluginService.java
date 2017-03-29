@@ -39,7 +39,7 @@ public class PluginService implements Mergeable<PluginBean>{
 	private Logger logger;
 
 	@Autowired
-	private Mergeable<PluginBatch> batchService;
+	private BatchService batchService;
 
 	@Autowired
 	private Mergeable<AbstractPluginInstaller> installerMergeable;
@@ -115,7 +115,13 @@ public class PluginService implements Mergeable<PluginBean>{
 
 			for (Jar jar : jars) {
 				PluginBean pluginToAdd = new PluginBean();
-				buildBean(jar, pluginToAdd);
+				
+				try {
+					buildBean(jar, pluginToAdd);
+				} catch (InstantiationException | IllegalAccessException e) {
+					e.printStackTrace();
+					throw new ServiceException(e.getMessage());
+				}
 			}
 		} catch (IOException | ClassNotFoundException | InstallException e) {
 			e.printStackTrace();
@@ -133,13 +139,14 @@ public class PluginService implements Mergeable<PluginBean>{
 	 * @param pluginToAdd plugin to build
 	 * @throws ClassNotFoundException in case no implementation of given abstract class is found
 	 * @throws InstallException if can't add Jar to classpath
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	private void buildBean(Jar jar, PluginBean pluginToAdd) throws ClassNotFoundException, InstallException {
-		pluginToAdd.setBatch((PluginBatch) jarDelegate.scanJarFileForImplementation(jar, PluginBatch.class));
-		pluginToAdd.setInstaller((AbstractPluginInstaller) jarDelegate.scanJarFileForImplementation(jar, AbstractPluginInstaller.class));
+	private void buildBean(Jar jar, PluginBean pluginToAdd) throws ClassNotFoundException, InstallException, InstantiationException, IllegalAccessException {
+		pluginToAdd.setBatch((PluginBatch) jarDelegate.scanJarFileForImplementation(jar, PluginBatch.class).newInstance());
+		pluginToAdd.setInstaller((AbstractPluginInstaller) jarDelegate.scanJarFileForImplementation(jar, AbstractPluginInstaller.class).newInstance());
 		pluginToAdd.setJarFile(jar.getAbsolutePath());
-		pluginToAdd.setName(((PluginBean) jarDelegate.scanJarFileForImplementation(jar, PluginBean.class))
-				.getClass().getSimpleName());
+		pluginToAdd.setName(jarDelegate.scanJarFileForImplementation(jar, PluginBean.class).getSimpleName());
 	}
 
 	/**
@@ -180,5 +187,45 @@ public class PluginService implements Mergeable<PluginBean>{
 				.installer(installerMergeable.merge(base.getInstaller(), updated.getInstaller()));
 
 		return base;
+	}
+
+	public PluginRepository getPluginDao() {
+		return pluginDao;
+	}
+
+	public void setPluginDao(PluginRepository pluginDao) {
+		this.pluginDao = pluginDao;
+	}
+
+	public PluginJarDelegate getJarDelegate() {
+		return jarDelegate;
+	}
+
+	public void setJarDelegate(PluginJarDelegate jarDelegate) {
+		this.jarDelegate = jarDelegate;
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+
+	public BatchService getBatchService() {
+		return batchService;
+	}
+
+	public void setBatchService(BatchService batchService) {
+		this.batchService = batchService;
+	}
+
+	public Mergeable<AbstractPluginInstaller> getInstallerMergeable() {
+		return installerMergeable;
+	}
+
+	public void setInstallerMergeable(Mergeable<AbstractPluginInstaller> installerMergeable) {
+		this.installerMergeable = installerMergeable;
 	}
 }

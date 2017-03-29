@@ -3,12 +3,12 @@ package net.biologeek.bot.plugin.services;
 import javax.validation.ValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
 import net.biologeek.bot.plugin.validation.DateValidator;
 
+@Service
 public class BatchService implements Mergeable<PluginBatch>{
 
 	@Autowired

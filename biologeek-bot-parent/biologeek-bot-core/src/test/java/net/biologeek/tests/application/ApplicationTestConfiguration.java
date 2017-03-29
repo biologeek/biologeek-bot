@@ -21,6 +21,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
+
 @Configuration
 @ComponentScan(basePackages = { "net.biologeek.bot" })
 @PropertySources({ @PropertySource("classpath:bdd.properties"), @PropertySource("classpath:configuration.properties") })

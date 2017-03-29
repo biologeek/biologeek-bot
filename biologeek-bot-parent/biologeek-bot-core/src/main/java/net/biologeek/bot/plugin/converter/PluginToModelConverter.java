@@ -25,7 +25,7 @@ public class PluginToModelConverter {
 		try {
 			if (installer.getInstallerServiceClass() == null ||Class.forName(installer.getInstallerServiceClass()).isInstance(SpringBatchPluginBatch.class))
 					return new SimplePluginInstaller()//
-							.batchPeriodBegin(installer.getBatchPeriodBegin())//
+							.batchPeriod(convert(installer.getBatchPeriod()))//
 							.installerService(installer.getInstallerServiceClass())//
 							.jarPath(installer.getJarPath());
 		} catch (ClassNotFoundException e) {
@@ -35,6 +35,10 @@ public class PluginToModelConverter {
 		return null;
 	}
 
+
+	private static Period convert(net.biologeek.bot.api.plugin.Period batchPeriod) {
+		return new Period(batchPeriod.getBeginning(), batchPeriod.getEnd());
+	}
 
 	private static SpringBatchPluginBatch convertBatch(net.biologeek.bot.api.plugin.PluginBatch batch) {
 			return new SpringBatchPluginBatch()//

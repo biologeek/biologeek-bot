@@ -1,9 +1,6 @@
 package net.biologeek.bot.plugin.services;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -18,16 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FilenameUtils;
-import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -35,7 +26,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Service;
 
-import javassist.bytecode.ClassFile;
 import net.biologeek.bot.plugin.beans.Jar;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.exceptions.InstallException;
@@ -49,7 +39,7 @@ public class PluginJarDelegate {
 
 	private Logger logger;
 
-	public Object scanJarFileForImplementation(String jar, Class clazz)
+	public Class scanJarFileForImplementation(String jar, Class clazz)
 			throws ClassNotFoundException, InstallException {
 		return this.scanJarFileForImplementation(new Jar(jar), clazz);
 	}
@@ -66,8 +56,8 @@ public class PluginJarDelegate {
 	 * @throws ClassNotFoundException
 	 * @throws InstallException
 	 */
-	public Object scanJarFileForImplementation(Jar jar, Class clazz) throws ClassNotFoundException, InstallException {
-		Object result = new Object();
+	public Class<?> scanJarFileForImplementation(Jar jar, Class clazz) throws ClassNotFoundException, InstallException {
+		Class<?> result = null;
 
 		addJarToClasspath(jar);
 
@@ -85,6 +75,8 @@ public class PluginJarDelegate {
 
 		if (list.size() == 1) {
 			result = Class.forName(list.get(0));
+		} else {
+			throw new InstallException("More than one candidate found : "+clazz.getName());
 		}
 		return result;
 	}

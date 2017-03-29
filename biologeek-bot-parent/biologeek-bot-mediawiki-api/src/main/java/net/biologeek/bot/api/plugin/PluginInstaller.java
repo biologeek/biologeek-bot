@@ -18,8 +18,7 @@ public class PluginInstaller implements Errorable, Serializable {
 	 */
 	private static final long serialVersionUID = 5432158865578250749L;
 	private Long id;
-	protected Date batchPeriodBegin;
-	protected Date batchPeriodEnd;
+	protected Period batchPeriod;
 
 	protected Date lastLaunchTime;
 	/**
@@ -65,20 +64,13 @@ public class PluginInstaller implements Errorable, Serializable {
 		return serialVersionUID;
 	}
 
-	public Date getBatchPeriodBegin() {
-		return batchPeriodBegin;
+
+	public Period getBatchPeriod() {
+		return batchPeriod;
 	}
 
-	public void setBatchPeriodBegin(Date batchPeriodBegin) {
-		this.batchPeriodBegin = batchPeriodBegin;
-	}
-
-	public Date getBatchPeriodEnd() {
-		return batchPeriodEnd;
-	}
-
-	public void setBatchPeriodEnd(Date batchPeriodEnd) {
-		this.batchPeriodEnd = batchPeriodEnd;
+	public void setBatchPeriod(Period batchPeriod) {
+		this.batchPeriod = batchPeriod;
 	}
 
 	public String getInstallerServiceClass() {
@@ -107,13 +99,8 @@ public class PluginInstaller implements Errorable, Serializable {
 		return this;
 	}
 
-	public PluginInstaller batchPeriodBegin(Date batchPeriodBegin) {
-		this.batchPeriodBegin = batchPeriodBegin;
-		return this;
-	}
-
-	public PluginInstaller batchPeriodEnd(Date batchPeriodEnd) {
-		this.batchPeriodEnd = batchPeriodEnd;
+	public PluginInstaller batchPeriod(Period period){
+		this.batchPeriod = period;
 		return this;
 	}
 }

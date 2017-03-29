@@ -34,10 +34,9 @@ public class PluginToApiConverter {
 
 	private static PluginInstaller convert(AbstractPluginInstaller installer) {
 		return new PluginInstaller()//
-				.batchPeriodBegin(installer.getBatchPeriodBegin())//
+				.batchPeriod(convertPeriod(installer.getBatchPeriod()))//
 				.id(installer.getId())//
-				.installerServiceClass(installer.getInstallerService())//
-				.batchPeriodEnd(installer.getBatchPeriodEnd());
+				.installerServiceClass(installer.getInstallerService());
 	}
 
 	public static List<PluginBean> convert(List<net.biologeek.bot.plugin.beans.PluginBean> notInstalledPlugins) {

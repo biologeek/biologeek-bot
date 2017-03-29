@@ -3,16 +3,11 @@ package net.biologeek.bot.plugin.beans.install;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import javax.persistence.Entity;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.PluginBean;
-import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
-import net.biologeek.bot.plugin.services.PluginInstallService;
 
 /**
  * {@link HttpsReplacePluginInstaller} implements {@link PluginSpecificInstallerDelegate}
@@ -23,6 +18,7 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
  * before and after uninstalling. Also it sets properties file and admin page
  * template specific to batch
  */
+@Service
 public class HttpsReplacePluginInstaller implements PluginSpecificInstallerDelegate {
 
 	private String adminPanelHtmlTemplate;
@@ -44,8 +40,7 @@ public class HttpsReplacePluginInstaller implements PluginSpecificInstallerDeleg
 		bean.setDescription("A plugin that replaces http links to https links");
 		bean.setName("HttpsReplaceBatch");
 		if (bean.getBatch() != null) {
-			bean.getBatch().setBatchPeriod(
-					new Period(bean.getInstaller().getBatchPeriodBegin(), bean.getInstaller().getBatchPeriodEnd()));
+			bean.getBatch().setBatchPeriod(bean.getInstaller().getBatchPeriod());
 		}
 		return bean;
 	}

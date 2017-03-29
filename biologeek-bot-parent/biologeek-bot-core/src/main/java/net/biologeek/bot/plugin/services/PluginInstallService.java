@@ -42,7 +42,7 @@ import sun.misc.URLClassPath;
  *
  */
 @Service
-public abstract class PluginInstallService implements Mergeable<AbstractPluginInstaller>{
+public class PluginInstallService implements Mergeable<AbstractPluginInstaller>{
 
 	protected ServiceLoader<PluginBatch> pluginBatchScanner;
 	@Autowired

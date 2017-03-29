@@ -1,11 +1,14 @@
 package net.biologeek.bot.plugin.beans.install;
 
-import java.util.Date;
+import javax.persistence.Entity;
 
+import net.biologeek.bot.plugin.beans.Period;
+
+@Entity
 public class SimplePluginInstaller extends AbstractPluginInstaller {
 
-	public SimplePluginInstaller batchPeriodBegin(Date batchPeriodBegin) {
-		this.batchPeriodBegin = batchPeriodBegin;
+	public SimplePluginInstaller batchPeriod(Period batchPeriodBegin) {
+		this.batchPeriod = batchPeriodBegin;
 		return this;
 	}
 
