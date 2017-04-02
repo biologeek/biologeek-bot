@@ -78,6 +78,11 @@ public class Examle {
 			}
 
 		}
+		
+		
+		String[] names = new String[]{"aa", "zzz", "eeeeee", "rrrrrr"};
+		
+		System.out.println(String.join("|", names));
 	}
 
 	public static class Blabla {

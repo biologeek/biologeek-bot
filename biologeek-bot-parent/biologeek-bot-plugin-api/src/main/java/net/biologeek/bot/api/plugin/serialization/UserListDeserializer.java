@@ -32,7 +32,6 @@ public class UserListDeserializer extends JsonDeserializer<UsersList> {
 		if (!query.isNull()) {
 			result.setUsers(convertUsers(query.get("users")));
 		}
-
 		return result;
 	}
 
@@ -66,7 +65,7 @@ public class UserListDeserializer extends JsonDeserializer<UsersList> {
 			user.setRights(node.get("rights").toString());
 		if (node.has("editcount"))
 			user.setEditcount(node.get("editcount").toString());
-		if (node.has("groups")){
+		if (node.has("groups")) {
 			user.setGroups(convertGroups(node.get("groups")));
 		}
 		return user;
@@ -76,9 +75,8 @@ public class UserListDeserializer extends JsonDeserializer<UsersList> {
 		Iterator<Entry<String, JsonNode>> it = jsonNode.fields();
 		List<String> groups = new ArrayList<>();
 		while (it.hasNext()) {
-			groups.add(it.next().getKey());			
+			groups.add(it.next().getKey());
 		}
 		return groups;
 	}
-
 }

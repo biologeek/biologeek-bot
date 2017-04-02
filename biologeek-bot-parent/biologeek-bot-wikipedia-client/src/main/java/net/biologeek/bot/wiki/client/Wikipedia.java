@@ -7,21 +7,23 @@ import java.util.logging.Logger;
 import net.biologeek.bot.api.plugin.article.ArticleCategories;
 import net.biologeek.bot.api.plugin.article.ArticleContent;
 import net.biologeek.bot.api.plugin.article.ArticleContributors;
-import net.biologeek.bot.api.plugin.category.Category;
 import net.biologeek.bot.api.plugin.category.CategoryMembers;
-import net.biologeek.bot.api.plugin.category.CategoryMembers.CategoryMember;
 import net.biologeek.bot.api.plugin.login.Login;
 import net.biologeek.bot.api.plugin.login.Login.LoginStatus;
 import net.biologeek.bot.api.plugin.login.LoginResponseType;
 import net.biologeek.bot.api.plugin.login.Token;
 import net.biologeek.bot.api.plugin.login.User;
+import net.biologeek.bot.api.plugin.users.UsersList;
 import net.biologeek.bot.wiki.client.endpoints.ArticleEndpoints;
 import net.biologeek.bot.wiki.client.endpoints.CategoriesEndpoints;
+import net.biologeek.bot.wiki.client.endpoints.UsersEndpoints;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
 import net.biologeek.bot.wiki.client.exceptions.NotRetriableException;
 import net.biologeek.bot.wiki.client.exceptions.WikiException;
 import net.biologeek.bot.wiki.client.utils.Constants;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 import retrofit2.Call;
@@ -31,9 +33,10 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Wikipedia API client with high-level methods to access article read and
- * write/edit functions
- * <br><br>
- * This class is the unique entry point for logging in and out, retrieving articles, categories, users, reading and editing
+ * write/edit functions <br>
+ * <br>
+ * This class is the unique entry point for logging in and out, retrieving
+ * articles, categories, users, reading and editing
  *
  */
 public class Wikipedia {
@@ -41,6 +44,7 @@ public class Wikipedia {
 	private List<Country> countries;
 	ArticleEndpoints articleEndpoints;
 	CategoriesEndpoints categoryEndpoints;
+	UsersEndpoints usersEndpoints;
 	private String baseURL;
 	private String userAgent;
 	protected String token;
@@ -111,7 +115,7 @@ public class Wikipedia {
 	 * @return
 	 * @throws APIException
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({})
 	public CategoryMembers getCategoryMembers(String title, String continueParam) throws APIException {
 		try {
 			if (!title.startsWith("Category:"))
@@ -146,6 +150,7 @@ public class Wikipedia {
 	 * @throws APIException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("null")
 	public CategoryMembers getCategoriesIBelongTo(String title, String continueParam, boolean getAll)
 			throws APIException {
 		if (title.startsWith("Category:"))
@@ -175,11 +180,14 @@ public class Wikipedia {
 	}
 
 	/**
-	 * Returns an {@link ArticleContent} object containing title and article body 
+	 * Returns an {@link ArticleContent} object containing title and article
+	 * body
 	 * 
-	 * @param title the title
+	 * @param title
+	 *            the title
 	 * @return
-	 * @throws WikiException in case it could not retrieve the article
+	 * @throws WikiException
+	 *             in case it could not retrieve the article
 	 */
 	public ArticleContent getArticleContent(String title) throws WikiException {
 		try {
@@ -193,13 +201,54 @@ public class Wikipedia {
 
 	/**
 	 * Returns the categories the article belongs to
-	 * @param title the title of the article
-	 * @return an {@link ArticleCategories} object encapsulating a list of categories
+	 * 
+	 * @param title
+	 *            the title of the article
+	 * @return an {@link ArticleCategories} object encapsulating a list of
+	 *         categories
 	 * @throws WikiException
 	 */
 	public ArticleCategories getArticleCategories(String title) throws WikiException {
 		try {
 			Response<ArticleCategories> response = this.getArticleEndpoints().getArticleCategories(title).execute();
+			return response.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WikiException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Allows to retrieve an user details by its pseudo<br>
+	 * <br>
+	 * 
+	 * @param name
+	 * @return
+	 * @throws WikiException
+	 */
+	public net.biologeek.bot.api.plugin.users.User getUserByName(String name) throws WikiException {
+		try {
+			Response<net.biologeek.bot.api.plugin.users.User> response = this.getUsersEndpoints().getUserByName(name)
+					.execute();
+			return response.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WikiException(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Allows to retrieve several users details by their pseudos<br>
+	 * <br>
+	 * 
+	 * @param name
+	 * @return
+	 * @throws WikiException
+	 */
+	public UsersList getUserByNames(String[] names) throws WikiException {
+		try {
+			Response<UsersList> response = this.getUsersEndpoints().getUserByNames(String.join("|", names))
+					.execute();
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -291,6 +340,14 @@ public class Wikipedia {
 							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
 							.create(CategoriesEndpoints.class)//
 			);
+
+			instance.setUsersEndpoints(//
+					new Retrofit.Builder()//
+							.baseUrl(instance.getBaseURL())//
+							.addConverterFactory(JacksonConverterFactory.create())//
+							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
+							.create(UsersEndpoints.class)//
+			);
 			return instance;
 		}
 
@@ -307,30 +364,37 @@ public class Wikipedia {
 			HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 			logging.setLevel(Level.BODY);
 			return new OkHttpClient.Builder()//
-					/*
-					 * .addInterceptor(new Interceptor() {
-					 * 
-					 * @Override public okhttp3.Response intercept(Chain arg0)
-					 * throws IOException { Request req = arg0.request(); if
-					 * (token != null && !token.isEmpty() && token.length() >
-					 * tokenMinLength) { // TODO parametrize min length in
-					 * properties and // inject via @Value
-					 * req.url().newBuilder().addQueryParameter("token", token);
-					 * } return arg0.proceed(req); } }).addInterceptor(new
-					 * Interceptor() {
-					 * 
-					 * @Override /** Adds JSON format to query by default
-					 *
-					 * public okhttp3.Response intercept(Chain arg0) throws
-					 * IOException { Request req = arg0.request(); req.url()//
-					 * .newBuilder()// .addQueryParameter("format", "json")//
-					 * .build(); return arg0.proceed(req); } })
-					 */.addInterceptor(logging).build();
+					.addInterceptor(new Interceptor() {
+						@Override
+						public okhttp3.Response intercept(Chain arg0) throws IOException {
+							Request req = arg0.request();
+							if (token != null && !token.isEmpty() && token.length() > tokenMinLength) {
+								// TODO parametrize min length in properties and
+								// inject via @Value
+								req.url().newBuilder().addQueryParameter("token", token);
+							}
+							return arg0.proceed(req);
+						}
+					}).addInterceptor(new Interceptor() {
+						@Override // Adds JSON format to query by default
+						public okhttp3.Response intercept(Chain arg0) throws IOException {
+							Request req = arg0.request();
+							req.url()//
+									.newBuilder()// .addQueryParameter("format",
+													// "json")
+									.build();
+							return arg0.proceed(req);
+						}
+					}).addInterceptor(logging).build();
 		}
 	}
 
 	public List<Country> getCountries() {
 		return countries;
+	}
+
+	public void setUsersEndpoints(UsersEndpoints create) {
+		this.usersEndpoints = create;
 	}
 
 	public void setCountries(List<Country> country2) {
@@ -419,6 +483,10 @@ public class Wikipedia {
 
 	public ArticleContributors getArticleContributors(String articleTitle) {
 		return null;
+	}
+
+	public UsersEndpoints getUsersEndpoints() {
+		return usersEndpoints;
 	}
 
 }
