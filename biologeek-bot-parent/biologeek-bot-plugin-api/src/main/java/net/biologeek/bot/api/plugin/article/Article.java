@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import net.biologeek.bot.api.plugin.article.ArticleContent;
-import net.biologeek.bot.api.plugin.serialization.ArticleDeserializer;
 import net.biologeek.bot.api.plugin.serialization.ArticleContentQueryType;
+import net.biologeek.bot.api.plugin.serialization.ArticleDeserializer;
 
 /**
  * Represents a raw Wikipedia article response. Example JSON :
