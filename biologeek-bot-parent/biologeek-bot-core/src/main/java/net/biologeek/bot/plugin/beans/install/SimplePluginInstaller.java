@@ -22,4 +22,9 @@ public class SimplePluginInstaller extends AbstractPluginInstaller {
 		return this;
 	}
 
+	public SimplePluginInstaller id(Long id) {
+		this.id = id;
+		return this;
+	}
+
 }

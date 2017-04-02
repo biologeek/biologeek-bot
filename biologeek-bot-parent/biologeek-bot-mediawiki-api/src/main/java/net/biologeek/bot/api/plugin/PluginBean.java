@@ -22,6 +22,7 @@ public class PluginBean implements Errorable, Serializable{
 	
 	private PluginBatch batch;
 	private PluginInstaller installer;
+	private String jarFile;
 	
 	
 	public String getDescription() {
@@ -61,9 +62,20 @@ public class PluginBean implements Errorable, Serializable{
 	public void setInstaller(PluginInstaller installer) {
 		this.installer = installer;
 	}
+	
+	public String getJarFile() {
+		return jarFile;
+	}
+	public void setJarFile(String jarFile) {
+		this.jarFile = jarFile;
+	}
 
 	// BUILDER
-	
+	public PluginBean jarFile(String jarFile) {
+		this.jarFile = jarFile;
+		return this;
+	}
+
 	public PluginBean description(String descriptions) {
 		this.description = descriptions;
 		return this;

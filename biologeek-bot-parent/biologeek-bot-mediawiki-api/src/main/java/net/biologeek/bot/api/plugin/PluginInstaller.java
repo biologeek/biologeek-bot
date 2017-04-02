@@ -103,4 +103,14 @@ public class PluginInstaller implements Errorable, Serializable {
 		this.batchPeriod = period;
 		return this;
 	}
+
+	public PluginInstaller jarPath(String jarPath){
+		this.jarPath = jarPath;
+		return this;
+	}
+
+	public PluginInstaller installerSpecificsClass(String installerSpecificsClass){
+		this.installerSpecificsClass = installerSpecificsClass;
+		return this;
+	}
 }

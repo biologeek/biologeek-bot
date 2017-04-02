@@ -33,7 +33,6 @@ public class SpringBatchPluginBatch extends PluginBatch {
 	protected String writer;
 	protected String procesor;
 	protected String job;
-	protected String steps;
 
 	public String getReader() {
 		return reader;
@@ -65,14 +64,6 @@ public class SpringBatchPluginBatch extends PluginBatch {
 
 	public void setJob(String job) {
 		this.job = job;
-	}
-
-	public String getSteps() {
-		return steps;
-	}
-
-	public void setSteps(String steps) {
-		this.steps = steps;
 	}
 
 	public SpringBatchPluginBatch batchPeriod(Period period) {

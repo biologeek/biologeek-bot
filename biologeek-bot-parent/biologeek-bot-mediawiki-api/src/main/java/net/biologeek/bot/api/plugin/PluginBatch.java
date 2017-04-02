@@ -1,6 +1,7 @@
 package net.biologeek.bot.api.plugin;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,10 @@ import net.biologeek.bot.api.plugin.exceptions.Errorable;
 
 public class PluginBatch implements Errorable, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2645767722636292786L;
 	/**
 	 * Batch concrete class
 	 */
@@ -125,5 +130,38 @@ public class PluginBatch implements Errorable, Serializable {
 	public void setLogs(List<BatchUnitRecord> logs) {
 		this.logs = logs;
 	}
+
+	public PluginBatch logs(List<BatchUnitRecord> arrayList) {
+		this.logs =arrayList;
+		return this;
+	}
+
+	public PluginBatch reader(String reader) {
+		this.reader = reader;
+		return this;
+	}
+
+	public PluginBatch processor(String processor) {
+		this.procesor = processor;
+		return this;
+	}
+
+	public PluginBatch writer(String writer) {
+		this.writer = writer;
+		return this;
+	}
+
+	public PluginBatch job(String job) {
+		this.job = job;
+		return this;
+	}
+
+	public PluginBatch lastLaunchTime(Date lastLaunchTime) {
+		this.lastLaunchTime = lastLaunchTime;
+		return this;
+	}
+
+	
+	
 
 }

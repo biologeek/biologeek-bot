@@ -1,5 +1,6 @@
 package net.biologeek.bot.plugin.services;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +26,19 @@ public class SimpleCategoryMembersServices {
 	 * Gets the next item to process in flow table. <br>
 	 * If mediaTypes == null, it retrieves whatever the next item
 	 * 
-	 * @param mediaTypes the {@link MediaType}
+	 * @param mediaTypes
+	 *            the {@link MediaType}
 	 * @return a {@link SimpleCategoryMember} if there is one, null else
 	 */
 	public SimpleCategoryMember getNextItemToRead(MediaType... mediaTypes) {
-		SimpleCategoryMember scm = mediaTypes == null ? scmRepository.getNextItemToRead()
+		List<SimpleCategoryMember> scm = mediaTypes == null ? scmRepository.getNextItemToRead()
 				: scmRepository.getNextItemToRead(mediaTypes);
+		SimpleCategoryMember result = scm.size() == 0 ? null : scm.get(0);
 		if (scm == null) {
 			logger.info("No item to read");
 			return null;
 		} else {
-			return scm;
+			return result;
 		}
 	}
 

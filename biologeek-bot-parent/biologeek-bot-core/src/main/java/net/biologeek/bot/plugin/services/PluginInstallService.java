@@ -11,17 +11,16 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Stack;
 import java.util.logging.Logger;
-import java.util.zip.DataFormatException;
 
 import javax.validation.ValidationException;
 
-import org.hibernate.validator.cfg.defs.NullDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.biologeek.bot.plugin.beans.Jar;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
+import net.biologeek.bot.plugin.beans.batch.SpringBatchPluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.UninstallException;
@@ -42,7 +41,7 @@ import sun.misc.URLClassPath;
  *
  */
 @Service
-public class PluginInstallService implements Mergeable<AbstractPluginInstaller>{
+public class PluginInstallService implements Mergeable<AbstractPluginInstaller> {
 
 	protected ServiceLoader<PluginBatch> pluginBatchScanner;
 	@Autowired
@@ -129,7 +128,8 @@ public class PluginInstallService implements Mergeable<AbstractPluginInstaller>{
 	 * @return
 	 */
 	@Override
-	public AbstractPluginInstaller merge(AbstractPluginInstaller base, AbstractPluginInstaller updated) throws ValidationException {
+	public AbstractPluginInstaller merge(AbstractPluginInstaller base, AbstractPluginInstaller updated)
+			throws ValidationException {
 		base.setBatchPeriod(updated.getBatchPeriod());
 		base.setInstallerService(updated.getInstallerService());
 		base.setJarPath(validateJar(updated.getJarPath()));
@@ -191,17 +191,21 @@ public class PluginInstallService implements Mergeable<AbstractPluginInstaller>{
 	 *            the absolute path of jar plugin to install
 	 * @return
 	 * @throws InstallException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public PluginBean install(String jarFilePath) throws InstallException {
+	public PluginBean install(String jarFilePath)
+			throws InstallException, InstantiationException, IllegalAccessException {
 
 		PluginBean bean = new PluginBean();
 		Jar jarFile = new Jar(jarFilePath);
 		if (jarFile.exists() && !jarFile.isDirectory() && jarFile.getName().endsWith("jar")) {
 			bean.setJarFile(jarFilePath);
 			try {
-				bean.setBatch((PluginBatch) jarService.scanJarFileForImplementation(jarFile, PluginBatch.class));
-				bean.setInstaller((AbstractPluginInstaller) jarService.scanJarFileForImplementation(jarFile,
-						AbstractPluginInstaller.class));
+				bean.setBatch(((Class<? extends PluginBatch>) jarService.scanJarFileForImplementation(jarFile,
+						PluginBatch.class)).newInstance());
+				bean.setInstaller(((Class<? extends AbstractPluginInstaller>) jarService
+						.scanJarFileForImplementation(jarFile, AbstractPluginInstaller.class)).newInstance());
 				bean.setDescription(null);
 				bean.setName(jarFile.getName());
 				this.install(bean);

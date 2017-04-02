@@ -18,39 +18,34 @@ public class PluginToModelConverter {
 		return new net.biologeek.bot.plugin.beans.PluginBean()//
 				.batch(convertBatch(bean.getBatch()))//
 				.description(bean.getDescription())//
-				.installer(convertInstaller(bean.getInstaller()));
+				.installer(convertInstaller(bean.getInstaller()))//
+				.name(bean.getName())//
+				.jarFile(bean.getJarFile());
 	}
 
-	private static AbstractPluginInstaller convertInstaller(PluginInstaller installer) throws ConversionException {
-		try {
-			if (installer.getInstallerServiceClass() == null ||Class.forName(installer.getInstallerServiceClass()).isInstance(SpringBatchPluginBatch.class))
-					return new SimplePluginInstaller()//
-							.batchPeriod(convert(installer.getBatchPeriod()))//
-							.installerService(installer.getInstallerServiceClass())//
-							.jarPath(installer.getJarPath());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new ConversionException("Could not convert installer");
-		}
-		return null;
+	public static AbstractPluginInstaller convertInstaller(PluginInstaller installer) throws ConversionException {
+		return new SimplePluginInstaller()//
+				.id(installer.getId())
+				.batchPeriod(convert(installer.getBatchPeriod()))//
+				.installerService(installer.getInstallerServiceClass())//
+				.jarPath(installer.getJarPath());
 	}
 
-
-	private static Period convert(net.biologeek.bot.api.plugin.Period batchPeriod) {
+	public static Period convert(net.biologeek.bot.api.plugin.Period batchPeriod) {
 		return new Period(batchPeriod.getBeginning(), batchPeriod.getEnd());
 	}
 
-	private static SpringBatchPluginBatch convertBatch(net.biologeek.bot.api.plugin.PluginBatch batch) {
-			return new SpringBatchPluginBatch()//
-					.batchPeriod(convertPeriod(batch.getBatchPeriod()))//
-					.lastLaunchTime(batch.getLastLaunchTime()).job(batch.getJob())//
-					.reader(batch.getReader())//
-					.procesor(batch.getProcesor())//
-					.writer(batch.getWriter())//
-					.logs(convert(batch.getLogs()));
+	public static SpringBatchPluginBatch convertBatch(net.biologeek.bot.api.plugin.PluginBatch batch) {
+		return new SpringBatchPluginBatch()//
+				.batchPeriod(convert(batch.getBatchPeriod()))//
+				.lastLaunchTime(batch.getLastLaunchTime()).job(batch.getJob())//
+				.reader(batch.getReader())//
+				.procesor(batch.getProcesor())//
+				.writer(batch.getWriter())//
+				.logs(convert(batch.getLogs()));
 	}
 
-	private static List<BatchUnitRecord> convert(List<net.biologeek.bot.api.plugin.BatchUnitRecord> logs) {
+	public static List<BatchUnitRecord> convert(List<net.biologeek.bot.api.plugin.BatchUnitRecord> logs) {
 		List<BatchUnitRecord> records = new ArrayList<>();
 		for (net.biologeek.bot.api.plugin.BatchUnitRecord log : logs) {
 			records.add(convert(log));
@@ -58,17 +53,13 @@ public class PluginToModelConverter {
 		return records;
 	}
 
-	private static BatchUnitRecord convert(net.biologeek.bot.api.plugin.BatchUnitRecord log) {
+	public static BatchUnitRecord convert(net.biologeek.bot.api.plugin.BatchUnitRecord log) {
 		return new BatchUnitRecord().beginningDate(log.getBeginningDate())//
 				.endDate(log.getEndDate())//
 				.exceptionClass(log.getExceptionClass())//
 				.exitCode(log.getExitCode())//
 				.logOutput(log.getLogOutput());//
 
-	}
-
-	private static Period convertPeriod(net.biologeek.bot.api.plugin.Period batchPeriod) {
-		return new Period(batchPeriod.getBeginning(), batchPeriod.getEnd());
 	}
 
 }
