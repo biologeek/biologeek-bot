@@ -2,17 +2,21 @@ package net.biologeek.bot.api.plugin.login;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Login {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class LoginResponse {
 
+	public static final String SUCCESS = "Success";
+	public static final String FAILED = "Failed";
 	@JsonProperty("warnings")
 	private List<Warning> warnings;
 	@JsonProperty("login")
 	private LoginStatus login;
 
 	public class Warning {
-		
+
 		@JsonProperty("*")
 		String value;
 
@@ -26,8 +30,24 @@ public class Login {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public class LoginStatus {
+		@JsonProperty("result")
 		private String result;
+		@JsonProperty("lguserid")
+		private String lguserid;
+		@JsonProperty("lgusername")
+		private String lgusername;
+		@JsonProperty("reason")
+		private String reason;
+
+		public String getReason() {
+			return reason;
+		}
+
+		public void setReason(String reason) {
+			this.reason = reason;
+		}
 
 		public String getResult() {
 			return result;
@@ -36,37 +56,23 @@ public class Login {
 		public void setResult(String result) {
 			this.result = result;
 		}
-	}
 
-	/**
-	 * Login object passed to body when logging
-	 * @author xcaron
-	 *
-	 */
-	public class LoginBody {
-		private String lgPassword;
-		private String lgToken;
-
-		public LoginBody(String password, String token) {
-			this.lgPassword = password;
-			this.lgToken = token;
+		public String getLguserid() {
+			return lguserid;
 		}
 
-		public String getLgPassword() {
-			return lgPassword;
+		public void setLguserid(String lguserid) {
+			this.lguserid = lguserid;
 		}
 
-		public void setLgPassword(String lgPassword) {
-			this.lgPassword = lgPassword;
+		public String getLgusername() {
+			return lgusername;
 		}
 
-		public String getLgToken() {
-			return lgToken;
+		public void setLgusername(String lgusername) {
+			this.lgusername = lgusername;
 		}
 
-		public void setLgToken(String lgToken) {
-			this.lgToken = lgToken;
-		}
 	}
 
 	public List<Warning> getWarnings() {

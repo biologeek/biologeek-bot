@@ -8,13 +8,15 @@ import net.biologeek.bot.api.plugin.article.ArticleCategories;
 import net.biologeek.bot.api.plugin.article.ArticleContent;
 import net.biologeek.bot.api.plugin.article.ArticleContributors;
 import net.biologeek.bot.api.plugin.category.CategoryMembers;
-import net.biologeek.bot.api.plugin.login.Login;
-import net.biologeek.bot.api.plugin.login.Login.LoginStatus;
+import net.biologeek.bot.api.plugin.login.LoginResponse;
+import net.biologeek.bot.api.plugin.login.LoginResponse.LoginStatus;
+import net.biologeek.bot.api.plugin.login.LoginRequest;
 import net.biologeek.bot.api.plugin.login.LoginResponseType;
 import net.biologeek.bot.api.plugin.login.Token;
 import net.biologeek.bot.api.plugin.login.User;
 import net.biologeek.bot.api.plugin.users.UsersList;
 import net.biologeek.bot.wiki.client.endpoints.ArticleEndpoints;
+import net.biologeek.bot.wiki.client.endpoints.AuthentificationEndpoints;
 import net.biologeek.bot.wiki.client.endpoints.CategoriesEndpoints;
 import net.biologeek.bot.wiki.client.endpoints.UsersEndpoints;
 import net.biologeek.bot.wiki.client.exceptions.APIException;
@@ -33,7 +35,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Wikipedia API client with high-level methods to access article read and
- * write/edit functions <br>
+ * write/edit functions, category properties, user profiles, ... <br>
  * <br>
  * This class is the unique entry point for logging in and out, retrieving
  * articles, categories, users, reading and editing
@@ -47,7 +49,7 @@ public class Wikipedia {
 	UsersEndpoints usersEndpoints;
 	private String baseURL;
 	private String userAgent;
-	protected String token;
+	protected String loginToken;
 	private int loginRetries;
 	private int maxLogins;
 	private int tokenMinLength;
@@ -56,6 +58,7 @@ public class Wikipedia {
 	private long timeToWait;
 
 	Logger logger;
+	private AuthentificationEndpoints authentEndpoints;
 
 	public Wikipedia() {
 		super();
@@ -64,39 +67,88 @@ public class Wikipedia {
 
 	/**
 	 * Gets token and logins bot to wikipedia if user is not connected. Else
-	 * does nothing
+	 * does nothing<br>
+	 * <br>
+	 * 
+	 * Tested login procedure that works : <br>
+	 * 1. Send GET to
+	 * https://fr.wikipedia.org/w/api.php?action=query&meta=tokens&type=login&format=json<br>
+	 * Returns :<br>
+	 * <code>{<br>
+	 * "batchcomplete": "",<br>
+	 * "query": {<br>
+	 * "tokens": {<br>
+	 * "logintoken": "70c35a9343b62220a8a4d63ba16bb49358e2c1ef+\\"<br>
+	 * }<br>
+	 * }<br>
+	 * }<br>
+	 * </code>
+	 * 
+	 * 2. POST request to
+	 * https://fr.wikipedia.org/w/api.php?action=login&lgname=Zybalou1234&format=json
+	 * <br>
+	 * <br>
+	 * with form-data : lgpassword=myPassword,
+	 * lgtoken=70c35a9343b62220a8a4d63ba16bb49358e2c1ef+\ <br>
+	 * <br>
+	 * Returns :<br>
+	 * <code>
+	 * {<br>
+	 * "warnings": {<br>
+	 * "main": {<br>
+	 * "*": "Subscribe to the mediawiki-api-announce mailing list at
+	 * <https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce> for
+	 * notice of API deprecations and breaking changes. Use
+	 * [[Special:ApiFeatureUsage]] to see usage of deprecated features by your
+	 * application."<br>
+	 * },<br>
+	 * "login": {<br>
+	 * "*": "Main-account login via \"action=login\" is deprecated and may stop
+	 * working without warning. To continue login with \"action=login\", see
+	 * [[Special:BotPasswords]]. To safely continue using main-account login,
+	 * see \"action=clientlogin\"."<br>
+	 * }<br>
+	 * },<br>
+	 * "login": {<br>
+	 * "result": "Success",<br>
+	 * "lguserid": 2772988,<br>
+	 * "lgusername": "Zybalou1234"<br>
+	 * }<br>
+	 * }<br>
+	 * </code>
 	 * 
 	 * @return
 	 * @throws NotRetriableException
 	 */
 	public Wikipedia login() throws NotRetriableException {
-		if (token == null || token.isEmpty()) {
-			Call<Token> token = articleEndpoints.getToken();
+		if (loginToken == null || loginToken.isEmpty()) {
+			Call<Token> token = authentEndpoints.getToken();
 			try {
-
+				// FIXME find login procedure
 				Token executedBody = token.execute().body();
 				System.out.println(token.execute().raw());
-				if (executedBody.getQuery() != null //
-						&& executedBody.getQuery().getTokens() != null //
-						&& executedBody.getQuery().getTokens().getLoginToken() != null
-						&& executedBody.getQuery().getTokens().getLoginToken().length() > tokenMinLength) {
+
+				this.setLoginToken(executedBody.getToken());
+				if (executedBody.getToken() != null && executedBody.getToken().length() > tokenMinLength) {
 					// TODO parametrize token minLength
 
-					retrofit2.Response<Login> loginResult = articleEndpoints
-							.login(user.getUsername(), new Login().new LoginBody(user.getPassword(), user.getToken()))
-							.execute();
-					if (loginResult.isSuccessful() && (loginResult.body().getWarnings() != null //
-							|| loginResult.body().getWarnings().isEmpty())) {
-						setToken(loginResult.body().getLogin().getResult());
+					retrofit2.Response<LoginResponse> loginResult = authentEndpoints
+							.login(user.getUsername(), new LoginRequest()//
+							.new LoginBody(user.getPassword(), user.getToken())).execute();
+
+					// Not sure that ap
+					if (loginResult.isSuccessful() && loginResult.body().getLogin() != null
+							&& loginResult.body().getLogin().getResult().equalsIgnoreCase(LoginResponse.SUCCESS)) {
 						setLoggedIn(true);
 					} else {
 						handleErrorResponses(loginResult.body().getLogin());
 					}
 
 				} else if (executedBody.getWarnings() != null && !executedBody.getWarnings().isEmpty()) {
-					throw new NotRetriableException("Could not get token");
+					throw new NotRetriableException("Could not get token : "
+							+ String.join(" | ", (String[]) executedBody.getWarnings().toArray()));
 				}
-			} catch (IOException | RetryCallException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 				if (loginRetries < maxLogins) {
 					loginRetries++;
@@ -236,7 +288,7 @@ public class Wikipedia {
 			throw new WikiException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Allows to retrieve several users details by their pseudos<br>
 	 * <br>
@@ -245,10 +297,9 @@ public class Wikipedia {
 	 * @return
 	 * @throws WikiException
 	 */
-	public UsersList getUserByNames(String[] names) throws WikiException {
+	public UsersList getUsersByNames(String[] names) throws WikiException {
 		try {
-			Response<UsersList> response = this.getUsersEndpoints().getUserByNames(String.join("|", names))
-					.execute();
+			Response<UsersList> response = this.getUsersEndpoints().getUserByNames(String.join("|", names)).execute();
 			return response.body();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -256,15 +307,16 @@ public class Wikipedia {
 		}
 	}
 
-	private void handleErrorResponses(LoginStatus login) throws NotRetriableException, RetryCallException {
+	/**
+	 * Handles response in case of error during login
+	 * 
+	 * @param login
+	 * @throws NotRetriableException
+	 */
+	private void handleErrorResponses(LoginStatus login) throws NotRetriableException {
 
-		switch (LoginResponseType.valueOf(login.getResult())) {
-
-		case WrongPass:
-			throw new NotRetriableException("Wrong password");
-
-		default:
-			throw new RetryCallException("Unknown error, so retry...");
+		if (login.getResult().equalsIgnoreCase(LoginResponse.FAILED)) {
+			throw new NotRetriableException(login.getReason());
 		}
 	}
 
@@ -330,14 +382,14 @@ public class Wikipedia {
 					new Retrofit.Builder()//
 							.baseUrl(instance.getBaseURL())//
 							.addConverterFactory(JacksonConverterFactory.create())//
-							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
+							.client(client(instance.getLoginToken(), instance.getTokenMinLength())).build()
 							.create(ArticleEndpoints.class)//
 			);
 			instance.setCategoryEndpoints(//
 					new Retrofit.Builder()//
 							.baseUrl(instance.getBaseURL())//
 							.addConverterFactory(JacksonConverterFactory.create())//
-							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
+							.client(client(instance.getLoginToken(), instance.getTokenMinLength())).build()
 							.create(CategoriesEndpoints.class)//
 			);
 
@@ -345,7 +397,7 @@ public class Wikipedia {
 					new Retrofit.Builder()//
 							.baseUrl(instance.getBaseURL())//
 							.addConverterFactory(JacksonConverterFactory.create())//
-							.client(client(instance.getToken(), instance.getTokenMinLength())).build()
+							.client(client(instance.getLoginToken(), instance.getTokenMinLength())).build()
 							.create(UsersEndpoints.class)//
 			);
 			return instance;
@@ -417,12 +469,12 @@ public class Wikipedia {
 		this.userAgent = userAgent;
 	}
 
-	public String getToken() {
-		return token;
+	public String getLoginToken() {
+		return loginToken;
 	}
 
-	public void setToken(String token) {
-		this.token = token;
+	public void setLoginToken(String token) {
+		this.loginToken = token;
 	}
 
 	public int getLoginRetries() {

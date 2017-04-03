@@ -4,55 +4,36 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import net.biologeek.bot.api.plugin.login.Login.Warning;
+import net.biologeek.bot.api.plugin.login.LoginResponse.Warning;
 
+
+/**
+ * 
+ * @author xcaron
+ *
+ */
 public class Token {
-
-	@JsonProperty("query")
-	private Query query;
 	
-	@JsonProperty("warnings")
-	private List<Warning> warnings;
+	private String token;
+	
+	private List<String> warnings;
 
-	public Query getQuery() {
-		return query;
-	}
-
-	public void setQuery(Query query) {
-		this.query = query;
-	}
-
-	public List<Warning> getWarnings() {
+	public List<String> getWarnings() {
 		return warnings;
 	}
 
-	public void setWarnings(List<Warning> warnings) {
+	public void setWarnings(List<String> warnings) {
 		this.warnings = warnings;
 	}
 
-	public class Query {
-		@JsonProperty("tokens")
-		private Tokens tokens;
+	public String getToken() {
+		return token;
+	}
 
-		public class Tokens {
-			@JsonProperty("loginToken")
-			private String loginToken;
-
-			public String getLoginToken() {
-				return loginToken;
-			}
-
-			public void setLoginToken(String loginToken) {
-				this.loginToken = loginToken;
-			}
-		}
-
-		public Tokens getTokens() {
-			return tokens;
-		}
-
-		public void setTokens(Tokens tokens) {
-			this.tokens = tokens;
-		}
+	public void setToken(String token) {
+		if (token.endsWith("+\\\\"))
+			this.token = token.substring(0, token.length()-1);
+		else 
+			this.token = token;
 	}
 }
