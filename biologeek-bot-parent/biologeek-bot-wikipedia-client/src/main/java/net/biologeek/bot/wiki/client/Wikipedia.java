@@ -50,6 +50,9 @@ public class Wikipedia {
 	private String baseURL;
 	private String userAgent;
 	protected String loginToken;
+	/**
+	 * Number of authorized retries in case login fails
+	 */
 	private int loginRetries;
 	private int maxLogins;
 	private int tokenMinLength;

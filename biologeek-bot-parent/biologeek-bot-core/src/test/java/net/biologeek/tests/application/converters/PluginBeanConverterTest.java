@@ -20,7 +20,7 @@ public class PluginBeanConverterTest extends AbstractConverterTest<PluginBean> {
 		net.biologeek.bot.api.plugin.PluginBean bean = aPlugin(); 
 		
 		PluginBean modelBean = PluginToModelConverter.convert(bean);
-		assertAllGetsAreNotNull(modelBean, null);
+		assertAllGetsAreNotNull(modelBean, new ArrayList<String>());
 		
 	}
 
