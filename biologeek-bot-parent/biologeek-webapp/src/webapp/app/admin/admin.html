@@ -1,0 +1,38 @@
+<div ng-controller="AdminController as adminController">
+	<div class="span9" id="content">
+		<div class="row-fluid">
+			<div class="block">
+				<div class="navbar navbar-inner block-header">
+					<div class="muted pull-right"></div>
+				</div>
+				<div class="block-content collapse in">
+					<button class="btn btn-primary" ng-click="accueilController.goToCreation()">Create brew</button>
+				</div>
+			</div>
+			<!-- block -->
+			<div class="block">
+				<div class="navbar navbar-inner block-header">
+					<div class="muted pull-left">Job options</div>
+				</div>
+				<div class="block-content collapse in">
+					<div class="span12">
+						<table class="table" ng-repeat="paramGroup in adminController.parameters">
+							<thead>
+								<tr>
+									<th>Param name</th>
+									<th>Param value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="param in paramGroup">
+									<td>{{param.label}}</td>
+									<td><input type="text" name="{{param.label}}-value">{{param.value}}</td>
+								</tr>
+							</tbody>
+						</table
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,6 +1,6 @@
 <!-- NOTE: Please don not delete any of the comments below -->
 <!doctype html>
-<html class="no-js" ng-app="myApp">
+<html class="no-js" ng-app="wikibot">
     <head>
         <meta charset="utf-8">
         <title>biologeek-bot-webapp</title>
@@ -10,11 +10,14 @@
 
         <!-- build:css styles/vendor.css -->
         <!-- bower:css -->
+        <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+        <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.css" />
         <!-- endbower -->
         <!-- endbuild -->
 
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/css/bootstrap.min.css">
         <!-- endbuild -->
 
         <!-- build:js scripts/modernizr.js -->
@@ -23,27 +26,37 @@
     </head>
     <body>
         <!-- View Place holder -->
-        <div ng-view=""></div>
+        <ng-view></ng-view>
 
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
         <script src="bower_components/jquery/dist/jquery.js"></script>
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-messages/angular-messages.js"></script>
         <script src="bower_components/angular-route/angular-route.js"></script>
-        <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+        <script src="bower_components/angular-animate/angular-animate.js"></script>
+        <script src="bower_components/angular-aria/angular-aria.js"></script>
+        <script src="bower_components/angular-material/angular-material.js"></script>
+        <script src="bower_components/chart.js/dist/Chart.js"></script>
+        <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
+        <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+        <script src="bower_components/moment/moment.js"></script>
+        <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
+        <script src="bower_components/underscore/underscore.js"></script>
+        <script src="bower_components/angular-moment/angular-moment.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
 
         <!-- Any include make it between the build comments below -->
         <!-- build:js({app,.tmp}) scripts/main.js -->
-        <script src="scripts/mainApp.js"></script>
-        <script src="scripts/controllers/sampleController.js"></script>
-        <script src="scripts/services/sampleService.js"></script>
-        <script src="scripts/directives/sampleDirective.js"></script>
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/admin.controller.js"></script>
+        <script src="scripts/services/plugin.service.js"></script>
+        <!--script src="scripts/directives/sampleDirective.js"></script>
         <script src="scripts/filters/sampleFilter.js"></script>
         <script src="scripts/utility/constant.js"></script>
-        <script src="scripts/utility/util.js"></script>
+        <script src="scripts/utility/util.js"></script>-->
         <!-- inject:partials -->
         <!-- endinject -->
         <!-- endbuild -->
