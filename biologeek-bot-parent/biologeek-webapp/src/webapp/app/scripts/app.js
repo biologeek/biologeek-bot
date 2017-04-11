@@ -11,7 +11,7 @@
 
 	app.config(function($routeProvider) {
 
-		$routeProvider.when('/admin', {
+		$routeProvider.when('/admin/:batchId', {
 			templateUrl : 'admin/admin.html',
 			controller : 'AdminController'
 		}).otherwise({

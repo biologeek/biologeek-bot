@@ -18,6 +18,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.biologeek.bot.api.plugin.ParametersList;
 import net.biologeek.bot.plugin.beans.Jar;
 import net.biologeek.bot.plugin.beans.PluginBean;
 import net.biologeek.bot.plugin.beans.batch.PluginBatch;
@@ -227,5 +228,10 @@ public class PluginService implements Mergeable<PluginBean>{
 
 	public void setInstallerMergeable(Mergeable<AbstractPluginInstaller> installerMergeable) {
 		this.installerMergeable = installerMergeable;
+	}
+
+	public net.biologeek.bot.plugin.beans.PluginBean updatePluginParams(Long id, PluginBean pluginBean) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

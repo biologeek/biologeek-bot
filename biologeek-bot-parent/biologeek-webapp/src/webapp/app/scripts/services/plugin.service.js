@@ -2,11 +2,11 @@
 (function() {
 	'use strict';
 
-	angular.module('wikibot').controller('PluginService', PluginService);
+	angular.module('wikibot').service('PluginService', PluginService);
 
-	PluginService.$inject = [ '$scope', '$http' ];
+	PluginService.$inject = [ '$http' ];
 
-	function PluginService($scope, $http){
+	function PluginService($http){
 		
 		var vm = this;
 	}
