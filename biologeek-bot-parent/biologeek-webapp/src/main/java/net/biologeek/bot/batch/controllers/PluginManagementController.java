@@ -30,7 +30,7 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
 import net.biologeek.bot.plugin.services.PluginService;
 
 @RestController
-
+@RequestMapping("/management")
 /**
  * This controller manages plugin related actions : <br>
  * <br>
@@ -48,7 +48,7 @@ public class PluginManagementController implements DefaultPluginActions {
 	@Autowired
 	PluginService pluginService;
 
-	@RequestMapping(value = "/list")
+	@RequestMapping(value = "/list/all")
 	public ResponseEntity<List<PluginBean>> listPlugins() {
 		List<PluginBean> result = null;
 		try {
