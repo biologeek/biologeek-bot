@@ -12,25 +12,29 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Period {
 	
-	private Date beginning;
-	private Date end;
+	private Date periodBeginning;
+	private Date periodEnd;
 	
 	
+	public Period() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public Period(Date batchPeriodBegin, Date batchPeriodEnd) {
-		this.beginning = batchPeriodBegin;
-		this.end = batchPeriodEnd;
+		this.periodBeginning = batchPeriodBegin;
+		this.periodEnd = batchPeriodEnd;
 	}
-	public Date getBeginning() {
-		return beginning;
+	public Date getPeriodBeginning() {
+		return periodBeginning;
 	}
-	public void setBeginning(Date beginning) {
-		this.beginning = beginning;
+	public void setPeriodBeginning(Date beginning) {
+		this.periodBeginning = beginning;
 	}
-	public Date getEnd() {
-		return end;
+	public Date getPeriodEnd() {
+		return periodEnd;
 	}
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setPeriodEnd(Date end) {
+		this.periodEnd = end;
 	}
 	
 	

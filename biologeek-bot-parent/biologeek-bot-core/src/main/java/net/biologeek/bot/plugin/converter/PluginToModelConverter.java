@@ -11,31 +11,40 @@ import net.biologeek.bot.api.plugin.ParametersList;
 import net.biologeek.bot.api.plugin.PluginBean;
 import net.biologeek.bot.api.plugin.PluginInstaller;
 import net.biologeek.bot.plugin.beans.Period;
+import net.biologeek.bot.plugin.beans.batch.BatchStatus;
 import net.biologeek.bot.plugin.beans.batch.SpringBatchPluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.beans.install.SimplePluginInstaller;
 import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
 import net.biologeek.bot.plugin.exceptions.ConversionException;
-import net.minidev.asm.ConvertDate;
 
 public class PluginToModelConverter {
 
 	private static SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
 	public static net.biologeek.bot.plugin.beans.PluginBean convert(PluginBean bean) throws ConversionException {
-		return new net.biologeek.bot.plugin.beans.PluginBean()//
-				.batch(convertBatch(bean.getBatch()))//
-				.description(bean.getDescription())//
-				.installer(convertInstaller(bean.getInstaller()))//
-				.name(bean.getName())//
-				.jarFile(bean.getJarFile());
+		try {
+			return new net.biologeek.bot.plugin.beans.PluginBean()//
+
+					.batch(convertBatch(bean.getBatch()))//
+					.description(bean.getDescription())//
+					.installer(convertInstaller(bean.getInstaller()))//
+					.name(bean.getName())//
+					.jarFile(bean.getJarFile());
+		} catch (Exception e) {
+			throw new ConversionException(e.getMessage());
+		}
 	}
 
 	public static AbstractPluginInstaller convertInstaller(PluginInstaller installer) throws ConversionException {
-		return new SimplePluginInstaller()//
-				.id(installer.getId()).batchPeriod(convert(installer.getBatchPeriod()))//
-				.installerService(installer.getInstallerServiceClass())//
-				.jarPath(installer.getJarPath());
+		try {
+			return new SimplePluginInstaller()//
+					.id(installer.getId()).batchPeriod(convert(installer.getBatchPeriod()))//
+					.installerService(installer.getInstallerServiceClass())//
+					.jarPath(installer.getJarPath());
+		} catch (Exception e) {
+			throw new ConversionException(e.getMessage());
+		}
 	}
 
 	public static Period convert(net.biologeek.bot.api.plugin.Period batchPeriod) {
@@ -49,7 +58,8 @@ public class PluginToModelConverter {
 				.reader(batch.getReader())//
 				.procesor(batch.getProcesor())//
 				.writer(batch.getWriter())//
-				.logs(convert(batch.getLogs()));
+				.logs(convert(batch.getLogs()))			
+				.status(BatchStatus.valueOf(batch.getStatus().name()));
 	}
 
 	public static List<BatchUnitRecord> convert(List<net.biologeek.bot.api.plugin.BatchUnitRecord> logs) {
@@ -76,43 +86,47 @@ public class PluginToModelConverter {
 	 * @param bean
 	 * @return
 	 * @throws ParseException
+	 * @throws ConversionException
 	 */
 	public static net.biologeek.bot.plugin.beans.PluginBean convert(ParametersList params,
-			net.biologeek.bot.plugin.beans.PluginBean bean) throws ParseException {
-
-		if (bean == null) {
-			bean = new net.biologeek.bot.plugin.beans.PluginBean();
-		}
-
-		bean.description(params.getGroup(ParameterGroup.BEAN).getParameter("description").getValue())//
-				.jarFile(params.getGroup(ParameterGroup.INSTALL).getParameter("jarPath").getValue())//
-				.name(params.getGroup(ParameterGroup.BEAN).getParameter("name").getValue());
-
-		if (bean.getBatch() != null) {
-			bean.getBatch().setLastLaunchTime(
-					convertDate(params.getGroup(ParameterGroup.BATCH).getParameter("lastLaunch").getValue()));
-			bean.getBatch().setBatchPeriod(getPeriod(params));
-			bean.getBatch().setTimeFrequency(
-					Double.parseDouble(params.getGroup(ParameterGroup.BATCH).getParameter("frequency").getValue()));
-
-			if (bean.getBatch() instanceof SpringBatchPluginBatch) {
-				((SpringBatchPluginBatch) bean.getBatch())
-						.job(params.getGroup(ParameterGroup.BATCH).getParameter("job").getValue());
-				((SpringBatchPluginBatch) bean.getBatch())
-						.writer(params.getGroup(ParameterGroup.BATCH).getParameter("writer").getValue());
-				((SpringBatchPluginBatch) bean.getBatch())
-						.reader(params.getGroup(ParameterGroup.BATCH).getParameter("reader").getValue());
-				((SpringBatchPluginBatch) bean.getBatch())
-						.procesor(params.getGroup(ParameterGroup.BATCH).getParameter("procesor").getValue());
+			net.biologeek.bot.plugin.beans.PluginBean bean) throws ConversionException {
+		try {
+			if (bean == null) {
+				bean = new net.biologeek.bot.plugin.beans.PluginBean();
 			}
-		}
-		if (bean.getInstaller() != null) {
-			bean.getInstaller().setBatchPeriod(getPeriod(params));
-			bean.getInstaller().setInstallerService(
-					params.getGroup(ParameterGroup.INSTALL).getParameter("installerServvice").getValue());
-			bean.getInstaller().setJarPath(params.getGroup(ParameterGroup.INSTALL).getParameter("jarPath").getValue());
-		}
 
+			bean.description(params.getGroup(ParameterGroup.BEAN).getParameter("description").getValue())//
+					.jarFile(params.getGroup(ParameterGroup.INSTALL).getParameter("jarPath").getValue())//
+					.name(params.getGroup(ParameterGroup.BEAN).getParameter("name").getValue());
+
+			if (bean.getBatch() != null) {
+				bean.getBatch().setLastLaunchTime(
+						convertDate(params.getGroup(ParameterGroup.BATCH).getParameter("lastLaunch").getValue()));
+				bean.getBatch().setBatchPeriod(getPeriod(params));
+				bean.getBatch().setTimeFrequency(
+						Double.parseDouble(params.getGroup(ParameterGroup.BATCH).getParameter("frequency").getValue()));
+
+				if (bean.getBatch() instanceof SpringBatchPluginBatch) {
+					((SpringBatchPluginBatch) bean.getBatch())
+							.job(params.getGroup(ParameterGroup.BATCH).getParameter("job").getValue());
+					((SpringBatchPluginBatch) bean.getBatch())
+							.writer(params.getGroup(ParameterGroup.BATCH).getParameter("writer").getValue());
+					((SpringBatchPluginBatch) bean.getBatch())
+							.reader(params.getGroup(ParameterGroup.BATCH).getParameter("reader").getValue());
+					((SpringBatchPluginBatch) bean.getBatch())
+							.procesor(params.getGroup(ParameterGroup.BATCH).getParameter("procesor").getValue());
+				}
+			}
+			if (bean.getInstaller() != null) {
+				bean.getInstaller().setBatchPeriod(getPeriod(params));
+				bean.getInstaller().setInstallerService(
+						params.getGroup(ParameterGroup.INSTALL).getParameter("installerServvice").getValue());
+				bean.getInstaller()
+						.setJarPath(params.getGroup(ParameterGroup.INSTALL).getParameter("jarPath").getValue());
+			}
+		} catch (Exception e) {
+			throw new ConversionException(e.getMessage());
+		}
 		return bean;
 	}
 

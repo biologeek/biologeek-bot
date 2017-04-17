@@ -13,20 +13,23 @@
 				</div>
 				<div class="block-content collapse in">
 					<div class="span12">
-						<table class="table" ng-repeat="paramGroup in adminController.parameters">
+						<table class="table" ng-repeat="paramGroup in adminController.parameters.groups">
 							<thead>
+								<tr><td colspan="2">{{paramGroup.labelKey}}</td></tr>
 								<tr>
 									<th>Param name</th>
 									<th>Param value</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="param in paramGroup">
-									<td>{{param.label}}</td>
-									<td><input type="text" name="{{param.label}}-value">{{param.value}}</td>
+								<tr ng-repeat="param in paramGroup.parameters">
+									<td>{{param.name}}</td>
+									<td><input type="text" name="{{param.name}}-value" value="{{param.value}}" /></td>
 								</tr>
 							</tbody>
-						</table
+						</table>
+						
+						<button type="submit" value="Save" ng-click="adminController.saveParams()">Save</button>
 					</div>
 				</div>
 			</div>

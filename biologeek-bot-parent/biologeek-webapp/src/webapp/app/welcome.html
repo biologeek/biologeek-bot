@@ -1,0 +1,42 @@
+<div ng-controller="WelcomeController as welcomeController">
+	<div class="span9" id="content">
+		<div class="row-fluid">
+			<div class="block">
+				<div class="navbar navbar-inner block-header">
+					<div class="muted pull-right"></div>
+				</div>
+			</div>
+			<!-- block -->
+			<div class="block">
+				<div class="navbar navbar-inner block-header">
+					<div class="muted pull-left">Plugin list</div>
+				</div>
+				<div class="block-content collapse in">
+				
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Plugin</th>
+							<th>Installed ?</th>
+							<th>last launch</th>
+							<th>State</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="plugin in welcomeController.pluginsToDisplay">
+							<td><a ng-href="#!/admin/{{plugin.pluginId}}">{{plugin.name}}</td>
+							<td style="font-weight:bold; color : {{plugin.installed ? '#00b000' : '#cc0303'}};">{{plugin.installed ? 'Yes' : 'No'}}</td>
+							<td>{{plugin.batch.lastLaunchTime | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+							<td>
+								<span class="label {{plugin.bootstrapLabelClassStatus}}">
+									{{plugin.batch.status | camelCase}}
+								 </span>
+							 </td>
+						</tr>
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

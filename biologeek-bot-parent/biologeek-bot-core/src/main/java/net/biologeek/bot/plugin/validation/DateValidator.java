@@ -24,7 +24,7 @@ public class DateValidator {
 	}
 
 	public Period validatePeriod(Period batchPeriod) {
-		if (batchPeriod.getBeginning().after(batchPeriod.getEnd()))
+		if (batchPeriod.getPeriodBeginning().after(batchPeriod.getPeriodEnd()))
 			throw new ValidationException();
 		return batchPeriod;
 	}

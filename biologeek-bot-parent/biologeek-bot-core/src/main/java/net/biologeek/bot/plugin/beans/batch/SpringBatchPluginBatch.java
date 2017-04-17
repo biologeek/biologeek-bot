@@ -1,16 +1,9 @@
 package net.biologeek.bot.plugin.beans.batch;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Entity;
-
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
@@ -98,6 +91,11 @@ public class SpringBatchPluginBatch extends PluginBatch {
 
 	public SpringBatchPluginBatch logs(List<BatchUnitRecord> logs) {
 		this.logs = logs;
+		return this;
+	}
+
+	public SpringBatchPluginBatch status(BatchStatus valueOf) {
+		this.status = valueOf;
 		return this;
 	}
 }

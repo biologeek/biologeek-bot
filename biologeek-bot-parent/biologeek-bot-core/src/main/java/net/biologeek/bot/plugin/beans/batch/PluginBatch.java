@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -53,6 +55,9 @@ public abstract class PluginBatch implements Batch {
 	@OneToMany(fetch=FetchType.LAZY)
 	protected List<BatchUnitRecord> logs;
 
+	@Enumerated(EnumType.STRING)
+	protected BatchStatus status;
+
 
 	public PluginBatch() {
 		super();
@@ -67,6 +72,16 @@ public abstract class PluginBatch implements Batch {
 	public Date getLastLaunchTime() {
 		return lastLaunchTime;
 	}
+
+	public BatchStatus getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(BatchStatus status) {
+		this.status = status;
+	}
+
 
 	public void setLastLaunchTime(Date lastLaunchTime) {
 		this.lastLaunchTime = lastLaunchTime;

@@ -33,7 +33,6 @@ import net.biologeek.bot.plugin.beans.batch.readers.WikipediaArticleItemReader;
 import net.biologeek.bot.plugin.beans.batch.writers.ArticleWitnessItemWriter;
 import net.biologeek.bot.plugin.beans.batch.writers.WikipediaArticleEditItemWriter;
 import net.biologeek.bot.plugin.beans.category.CategoryMembers;
-import net.biologeek.bot.plugin.config.ApplicationConfig;
 
 @Configuration
 @PropertySources({ @PropertySource("classpath:application.properties"),

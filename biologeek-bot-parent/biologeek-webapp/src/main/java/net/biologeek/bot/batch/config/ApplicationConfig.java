@@ -1,4 +1,4 @@
-package net.biologeek.bot.plugin.config;
+package net.biologeek.bot.batch.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -31,15 +31,14 @@ import net.biologeek.bot.wiki.client.Wikipedia.WikipediaBuilder;
 
 @Configuration
 @ComponentScan("net.biologeek.bot")
-@EnableJpaRepositories
+@EnableJpaRepositories("net.biologeek.bot.plugin.repositories")
 @EnableTransactionManagement
-//@PropertySources({ // @PropertySource("file://${app.parameters}/configuration.properties"),
-	//	@PropertySource("file:${app.parameters}/bdd.properties") })
+@PropertySources({ @PropertySource("file:${app.parameters}/configuration.properties"),
+		@PropertySource("file:${app.parameters}/bdd.properties") })
 /**
  * Datasource building consists of JNDI lookup over comp/env/jdbc/wikibot
  */
-public class ApplicationConfig implements EnvironmentAware{
-
+public class ApplicationConfig implements EnvironmentAware {
 
 	@Value("${jdbc.connection.driver}")
 	protected String connectionDriverClassName;
@@ -67,16 +66,15 @@ public class ApplicationConfig implements EnvironmentAware{
 
 	@Value("${api.maxlogins}")
 	private String maxLogins;
-	
+
 	@Bean
 	public EmbeddedServletContainerFactory tomcat() {
 		return new TomcatEmbeddedServletContainerFactory();
 	}
-/*
+
 	@Bean
 	public DataSource datasource() throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
-
 
 		dataSource.setDriverClassName(env.getProperty("jdbc.connection.driver"));
 		dataSource.setUrl(env.getProperty("jdbc.connection.url"));
@@ -85,9 +83,9 @@ public class ApplicationConfig implements EnvironmentAware{
 
 		return dataSource;
 	}
-*/
+
 	@Bean
-	JpaTransactionManager jpaTransactionManager(EntityManagerFactory factory) {
+	JpaTransactionManager transactionManager(EntityManagerFactory factory) {
 		JpaTransactionManager manager = new JpaTransactionManager();
 		manager.setEntityManagerFactory(factory);
 		return manager;
@@ -109,39 +107,39 @@ public class ApplicationConfig implements EnvironmentAware{
 		props.put("hibernate.dialect", dialect);
 		props.put("hibernate.show_sql", true);
 		props.put("hibernate.hbm2ddl.auto", "update");
-		
+
 		return props;
 	}
 
 	@Override
 	public void setEnvironment(Environment environment) {
-		env = environment;		
+		env = environment;
 	}
-	
+
 	@Bean
-	Wikipedia wikipedia(){
+	Wikipedia wikipedia() {
 		Wikipedia.WikipediaBuilder builder = new WikipediaBuilder(null);
-		if (country != null && !country.equals("")){
+		if (country != null && !country.equals("")) {
 			List<Country> countries = processCountries(country);
-			builder.languages(countries);			
+			builder.languages(countries);
 		}
-		
-		if (baseURL != null && !baseURL.equals("")){
+
+		if (baseURL != null && !baseURL.equals("")) {
 			builder.baseURL(baseURL);
 		}
-		
-		if (maxLogins != null && !maxLogins.equals("")){
+
+		if (maxLogins != null && !maxLogins.equals("")) {
 			builder.maxLogins(Integer.valueOf(maxLogins));
 		}
-		
+
 		return builder.build();
 	}
 
 	private List<Country> processCountries(String country2) {
 		List<Country> res = new ArrayList<>();
 		String[] splited = country2.split(";");
-		for (String elt : splited){
-			if (Country.contains(elt)){
+		for (String elt : splited) {
+			if (Country.contains(elt)) {
 				res.add(Country.valueOf(elt));
 			}
 		}

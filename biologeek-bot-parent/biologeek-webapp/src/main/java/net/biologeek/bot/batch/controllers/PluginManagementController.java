@@ -9,10 +9,10 @@ import javax.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.biologeek.bot.api.plugin.ParametersList;
@@ -30,7 +30,7 @@ import net.biologeek.bot.plugin.services.PluginInstallService;
 import net.biologeek.bot.plugin.services.PluginService;
 
 @RestController
-@RequestMapping("/management")
+@RequestMapping("/api/management")
 /**
  * This controller manages plugin related actions : <br>
  * <br>
@@ -113,7 +113,7 @@ public class PluginManagementController implements DefaultPluginActions {
 
 	@Override
 	@RequestMapping(value = "/configure/{id}", method = RequestMethod.GET)
-	public ResponseEntity<? extends Errorable> configureBatch(Long id) {
+	public ResponseEntity<? extends Errorable> configureBatch(@PathVariable("id") Long id) {
 		ResponseEntity<? extends Errorable> response = null;
 		response = new ResponseEntity<PluginBean>(PluginToApiConverter.convert(pluginService.getPluginById(id)),
 				HttpStatus.OK);
@@ -121,7 +121,7 @@ public class PluginManagementController implements DefaultPluginActions {
 	}
 
 	@RequestMapping(value = "/parameters/{id}", method = RequestMethod.GET)
-	public ResponseEntity<? extends Errorable> getParametersForBatch(@RequestParam("id") Long id) {
+	public ResponseEntity<? extends Errorable> getParametersForBatch(@PathVariable("id") Long id) {
 		ResponseEntity<? extends Errorable> response = null;
 		response = new ResponseEntity<ParametersList>(
 				PluginToApiConverter.convertParamsList(pluginService.getPluginById(id)), HttpStatus.OK);
@@ -129,8 +129,8 @@ public class PluginManagementController implements DefaultPluginActions {
 	}
 
 	@RequestMapping(value = "/parameters/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<? extends Errorable> postParametersForBatch(@RequestParam("id") Long id,
-			@RequestBody ParametersList params) throws ParseException {
+	public ResponseEntity<? extends Errorable> postParametersForBatch(@PathVariable("id") Long id,
+			@RequestBody ParametersList params) throws ParseException, ConversionException {
 		ResponseEntity<? extends Errorable> response = null;
 		net.biologeek.bot.plugin.beans.PluginBean plugin = pluginService.getPluginById(id);
 		response = new ResponseEntity<ParametersList>(

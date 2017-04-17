@@ -38,8 +38,6 @@
         <script src="bower_components/angular-animate/angular-animate.js"></script>
         <script src="bower_components/angular-aria/angular-aria.js"></script>
         <script src="bower_components/angular-material/angular-material.js"></script>
-        <script src="bower_components/chart.js/dist/Chart.js"></script>
-        <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
         <script src="bower_components/jquery-ui/jquery-ui.js"></script>
         <script src="bower_components/moment/moment.js"></script>
         <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
@@ -51,15 +49,19 @@
         <!-- Any include make it between the build comments below -->
         <!-- build:js({app,.tmp}) scripts/main.js -->
         <script src="scripts/app.js"></script>
+        <script src="scripts/utility/constants.js"></script>
+        
+        <script src="scripts/filters/camelcase.filter.js"></script>
+        
         
         <!-- Services -->
         <script src="scripts/services/plugin.service.js"></script>
 
 		<!-- Controllers -->
         <script src="scripts/controllers/admin.controller.js"></script>
+        <script src="scripts/controllers/welcome.controller.js"></script>
         <!--script src="scripts/directives/sampleDirective.js"></script>
         <script src="scripts/filters/sampleFilter.js"></script>
-        <script src="scripts/utility/constant.js"></script>
         <script src="scripts/utility/util.js"></script>-->
         <!-- inject:partials -->
         <!-- endinject -->

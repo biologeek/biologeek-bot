@@ -9,11 +9,15 @@
 			'ngMaterial', 'ui-notification',
 			'angularMoment' ]);
 
+	app.constant('_', window._);
 	app.config(function($routeProvider) {
 
 		$routeProvider.when('/admin/:batchId', {
 			templateUrl : 'admin/admin.html',
 			controller : 'AdminController'
+		}).when('/', {
+			templateUrl : 'welcome.html',
+			controller : 'WelcomeController'
 		}).otherwise({
 			redirectTo : '/'
 		});
