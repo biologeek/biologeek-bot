@@ -56,7 +56,7 @@ public abstract class PluginBatch implements Batch {
 	protected List<BatchUnitRecord> logs;
 
 	@Enumerated(EnumType.STRING)
-	protected BatchStatus status;
+	protected org.springframework.batch.core.BatchStatus status;
 
 
 	public PluginBatch() {
@@ -73,12 +73,12 @@ public abstract class PluginBatch implements Batch {
 		return lastLaunchTime;
 	}
 
-	public BatchStatus getStatus() {
+	public org.springframework.batch.core.BatchStatus getStatus() {
 		return status;
 	}
 
 
-	public void setStatus(BatchStatus status) {
+	public void setStatus(org.springframework.batch.core.BatchStatus status) {
 		this.status = status;
 	}
 

@@ -94,7 +94,7 @@ public class SpringBatchPluginBatch extends PluginBatch {
 		return this;
 	}
 
-	public SpringBatchPluginBatch status(BatchStatus valueOf) {
+	public SpringBatchPluginBatch status(org.springframework.batch.core.BatchStatus valueOf) {
 		this.status = valueOf;
 		return this;
 	}

@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.batch.core.BatchStatus;
+
 import net.biologeek.bot.api.plugin.ParameterGroup;
 import net.biologeek.bot.api.plugin.ParametersList;
 import net.biologeek.bot.api.plugin.PluginBean;
 import net.biologeek.bot.api.plugin.PluginInstaller;
 import net.biologeek.bot.plugin.beans.Period;
-import net.biologeek.bot.plugin.beans.batch.BatchStatus;
 import net.biologeek.bot.plugin.beans.batch.SpringBatchPluginBatch;
 import net.biologeek.bot.plugin.beans.install.AbstractPluginInstaller;
 import net.biologeek.bot.plugin.beans.install.SimplePluginInstaller;

@@ -19,13 +19,16 @@ import net.biologeek.bot.api.plugin.ParametersList;
 import net.biologeek.bot.api.plugin.PluginBean;
 import net.biologeek.bot.api.plugin.exceptions.Errorable;
 import net.biologeek.bot.api.plugin.exceptions.ExceptionWrapper;
+import net.biologeek.bot.plugin.beans.batch.SpringBatchPluginBatch;
 import net.biologeek.bot.plugin.converter.ExceptionToApiConverter;
 import net.biologeek.bot.plugin.converter.PluginToApiConverter;
 import net.biologeek.bot.plugin.converter.PluginToModelConverter;
+import net.biologeek.bot.plugin.exceptions.BatchException;
 import net.biologeek.bot.plugin.exceptions.ConversionException;
 import net.biologeek.bot.plugin.exceptions.InstallException;
 import net.biologeek.bot.plugin.exceptions.ServiceException;
 import net.biologeek.bot.plugin.install.PluginSpecificInstallerDelegate;
+import net.biologeek.bot.plugin.services.BatchService;
 import net.biologeek.bot.plugin.services.PluginInstallService;
 import net.biologeek.bot.plugin.services.PluginService;
 
@@ -47,6 +50,9 @@ public class PluginManagementController implements DefaultPluginActions {
 
 	@Autowired
 	PluginService pluginService;
+
+	@Autowired
+	BatchService batchService;
 
 	@RequestMapping(value = "/list/all")
 	public ResponseEntity<List<PluginBean>> listPlugins() {
@@ -137,6 +143,41 @@ public class PluginManagementController implements DefaultPluginActions {
 				PluginToApiConverter.convertParamsList(
 						pluginService.updatePluginParams(id, PluginToModelConverter.convert(params, plugin))),
 				HttpStatus.OK);
+		return response;
+	}
+
+	@RequestMapping(value = "/start/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<? extends Errorable> launchBatch(@PathVariable("id") Long id)
+			throws ParseException, ConversionException {
+		ResponseEntity<? extends Errorable> response = null;
+		net.biologeek.bot.plugin.beans.PluginBean plugin = pluginService.getPluginById(id);
+		try {
+			response = new ResponseEntity<>(PluginToApiConverter
+					.convert(batchService.startSpringBatch((SpringBatchPluginBatch) plugin.getBatch())), HttpStatus.OK);
+		} catch (BatchException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(new ExceptionWrapper()//
+					.errorClassName(e.getClass().getName())//
+					.humanReadableError(e.getMessage()), HttpStatus.OK);
+		}
+		return response;
+	}
+
+	@RequestMapping(value = "/pause/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<? extends Errorable> pauseBatch(@PathVariable("id") Long id)
+			throws ParseException, ConversionException {
+		ResponseEntity<? extends Errorable> response = null;
+		net.biologeek.bot.plugin.beans.PluginBean plugin = pluginService.getPluginById(id);
+		response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return response;
+	}
+
+	@RequestMapping(value = "/stop/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<? extends Errorable> stopBatch(@PathVariable("id") Long id)
+			throws ParseException, ConversionException {
+		ResponseEntity<? extends Errorable> response = null;
+		net.biologeek.bot.plugin.beans.PluginBean plugin = pluginService.getPluginById(id);
+		response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		return response;
 	}
 }

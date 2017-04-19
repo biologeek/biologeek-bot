@@ -1,11 +1,6 @@
 <div ng-controller="WelcomeController as welcomeController">
 	<div class="span9" id="content">
 		<div class="row-fluid">
-			<div class="block">
-				<div class="navbar navbar-inner block-header">
-					<div class="muted pull-right"></div>
-				</div>
-			</div>
 			<!-- block -->
 			<div class="block">
 				<div class="navbar navbar-inner block-header">
@@ -20,6 +15,7 @@
 							<th>Installed ?</th>
 							<th>last launch</th>
 							<th>State</th>
+							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -31,7 +27,19 @@
 								<span class="label {{plugin.bootstrapLabelClassStatus}}">
 									{{plugin.batch.status | camelCase}}
 								 </span>
-							 </td>
+							</td>
+							<td>
+								<div class="btn-group">
+								  <button data-toggle="dropdown" class="btn dropdown-toggle">Action <span class="caret"></span></button>
+								  <ul class="dropdown-menu">
+									<li>Action</li>
+									<li>Another action</li>
+									<li>Something else here</li>
+									<li class="divider"></li>
+									<li>Separated link</li>
+								  </ul>
+								</div>
+							</td>
 						</tr>
 					</tbody>
 				</table>

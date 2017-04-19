@@ -37,7 +37,6 @@ import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 @Configuration
 @PropertySources({ @PropertySource("classpath:application.properties"),
 		@PropertySource("classpath:bdd.properties") })
-@Import(value = ApplicationConfig.class)
 @EnableBatchProcessing
 public class HttpsReplaceConfig {
 

@@ -29,7 +29,7 @@ public class PluginToApiConverter {
 				.batch(convert(install.getBatch()));
 	}
 
-	private static PluginBatch convert(net.biologeek.bot.plugin.beans.batch.PluginBatch batch) {
+	public static PluginBatch convert(net.biologeek.bot.plugin.beans.batch.PluginBatch batch) {
 		return new PluginBatch()//
 				.batchPeriod(convertPeriod(batch.getBatchPeriod()))//
 				.className(batch.getClass().getName())//
