@@ -83,6 +83,10 @@ public class Examle {
 		String[] names = new String[]{"aa", "zzz", "eeeeee", "rrrrrr"};
 		
 		System.out.println(String.join("|", names));
+		System.out.println("*****************************************");
+		String str = "ClassNotFound";
+		
+		System.out.println("Length : "+str.split(".").length+" - "+String.join(".", str.split(".")));
 	}
 
 	public static class Blabla {

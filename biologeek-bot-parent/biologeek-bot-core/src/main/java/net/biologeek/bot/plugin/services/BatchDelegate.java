@@ -20,4 +20,6 @@ public interface BatchDelegate {
 	 * @throws BatchException in case of error at setting parameters
 	 */
 	public void setParameters(PluginBatch batch) throws BatchException;
+	
+	public void setBatchBean(String beanName, boolean isClass);
 }

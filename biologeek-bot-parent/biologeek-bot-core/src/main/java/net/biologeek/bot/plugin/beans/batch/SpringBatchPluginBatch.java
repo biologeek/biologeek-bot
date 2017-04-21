@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 
 import net.biologeek.bot.plugin.beans.Period;
 import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
+import net.biologeek.bot.plugin.utils.SpringToolbox;
 
 /**
  * A Spring Batch extension of PluginBatch.
@@ -17,14 +18,26 @@ import net.biologeek.bot.plugin.beans.logs.BatchUnitRecord;
  * @param <T>
  */
 @Entity
-public class SpringBatchPluginBatch extends PluginBatch {
+public class SpringBatchPluginBatch extends SpringAwarePluginBatch {
 
 	/**
-	 * Spring Batch Reader
+	 * Spring Batch reader
 	 */
 	protected String reader;
+
+	/**
+	 * Spring Batch writer
+	 */
 	protected String writer;
+
+	/**
+	 * Spring Batch processor
+	 */
 	protected String procesor;
+
+	/**
+	 * Spring Batch job
+	 */
 	protected String job;
 
 	public String getReader() {
@@ -97,5 +110,10 @@ public class SpringBatchPluginBatch extends PluginBatch {
 	public SpringBatchPluginBatch status(org.springframework.batch.core.BatchStatus valueOf) {
 		this.status = valueOf;
 		return this;
+	}
+	
+
+	public String getSpringBeanName() {
+		return springBeanName == null ? SpringToolbox.resolveClassNameToSpringBeanName(this.job) : springBeanName;
 	}
 }

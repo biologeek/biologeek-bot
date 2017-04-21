@@ -32,7 +32,7 @@ public abstract class PluginBatch implements Batch {
 	/**
 	 * Batch Plugin object
 	 */
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY)
 	protected PluginBean plugin;
 	/**
 	 * The period of time over which the batch will be able to run
@@ -57,6 +57,8 @@ public abstract class PluginBatch implements Batch {
 
 	@Enumerated(EnumType.STRING)
 	protected org.springframework.batch.core.BatchStatus status;
+	
+	
 
 
 	public PluginBatch() {

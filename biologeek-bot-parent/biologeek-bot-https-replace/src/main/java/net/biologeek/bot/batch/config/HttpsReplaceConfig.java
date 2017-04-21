@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import net.biologeek.bot.batch.HttpsReplaceItemProcesor;
@@ -35,8 +36,7 @@ import net.biologeek.bot.plugin.beans.batch.writers.WikipediaArticleEditItemWrit
 import net.biologeek.bot.plugin.beans.category.CategoryMembers;
 
 @Configuration
-@PropertySources({ @PropertySource("classpath:application.properties"),
-		@PropertySource("classpath:bdd.properties") })
+@PropertySources({ @PropertySource("classpath:application.properties") })
 @EnableBatchProcessing
 public class HttpsReplaceConfig {
 
@@ -58,6 +58,7 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean
+	@Scope("prototype")
 	Job httpsConversionJob() {
 		return jobs.get("httpsConversionJob")//
 				.flow(retrieveArticleTitles())//
@@ -67,8 +68,10 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean
+	@Scope("prototype")
 	/**
 	 * First step that retrieves the articles titles
+	 * 
 	 * @return
 	 */
 	Step retrieveArticleTitles() {
@@ -81,13 +84,15 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean
+	@Scope("prototype")
 	/**
 	 * Second step, the one that converts http to https
+	 * 
 	 * @return
 	 */
 	Step httpsConvertStep() {
 		return steps.get("httpsConvertStep")//
-				.<ArticleContent, ArticleContent> chunk(10)//
+				.<ArticleContent, ArticleContent>chunk(10)//
 				.reader(articleReader())//
 				.processor(itemProcesor())//
 				.writer(articleCompositeItemWriter()).build();
@@ -98,6 +103,8 @@ public class HttpsReplaceConfig {
 	 * 
 	 * @return
 	 */
+	@Bean
+	@Scope("prototype")
 	private ItemWriter<SimpleCategoryMembers> tempCategoryStorage() {
 		JpaItemWriter<SimpleCategoryMembers> writer = new JpaItemWriter<>();
 		writer.setEntityManagerFactory(entityManagerFactory);
@@ -109,6 +116,8 @@ public class HttpsReplaceConfig {
 	 * 
 	 * @return
 	 */
+	@Bean
+	@Scope("prototype")
 	private ItemProcessor<CategoryMembers, SimpleCategoryMembers> categoryProcessor() {
 		return new PurgeSubCategoriesItemProcesor();
 	}
@@ -119,16 +128,19 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean
+	@Scope("prototype")
 	ItemReader<ArticleContent> articleReader() {
 		return new WikipediaArticleItemReader();
 	}
 
 	@Bean
+	@Scope("prototype")
 	ItemProcessor<ArticleContent, ArticleContent> itemProcesor() {
 		return new HttpsReplaceItemProcesor();
 	}
 
 	@Bean("articleCompositeItemWriter")
+	@Scope("prototype")
 	CompositeItemWriter<ArticleContent> articleCompositeItemWriter() {
 		CompositeItemWriter<ArticleContent> ciw = new CompositeItemWriter<>();
 		ciw.setDelegates(Arrays.asList(wikipediaArticleEditItemWriter(), articleWitnessItemWriter()));
@@ -136,11 +148,13 @@ public class HttpsReplaceConfig {
 	}
 
 	@Bean(name = "articleWitnessItemWriter")
+	@Scope("prototype")
 	ItemWriter<ArticleElement> articleWitnessItemWriter() {
 		return new ArticleWitnessItemWriter();
 	}
 
 	@Bean(name = "wikipediaArticleEditItemWriter")
+	@Scope("prototype")
 	ItemWriter<ArticleElement> wikipediaArticleEditItemWriter() {
 		return new WikipediaArticleEditItemWriter<>();
 	}
